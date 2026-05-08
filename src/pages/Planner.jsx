@@ -194,12 +194,20 @@ export default function Planner() {
   const [tripDate, setTripDate] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const resultsRef = useRef(null);
+  const destInputRef = useRef(null);
 
-  // Pre-fill from URL params (from Landing page clicks)
+  // Pre-fill from URL params (from Landing page destination clicks)
   useEffect(() => {
     const dest = searchParams.get('dest');
     const persona = searchParams.get('persona');
-    if (dest) setDestination(dest);
+    if (dest) {
+      setDestination(dest);
+      // Focus the destination input after mount so user sees it pre-filled
+      setTimeout(() => {
+        destInputRef.current?.focus();
+        destInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
     if (persona) setVibe(persona);
   }, [searchParams]);
 
@@ -297,6 +305,7 @@ export default function Planner() {
                   required
                   disabled={loading}
                   aria-label="Trip destination"
+                  ref={destInputRef}
                 />
               </div>
 

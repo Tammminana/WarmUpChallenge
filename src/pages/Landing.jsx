@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Zap, Globe, ArrowRight, Star, Wallet, Shield } from 'lucide-react';
+import { MapPin, Zap, Globe, ArrowRight, Star, Wallet, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import WorldClock from '../components/WorldClock';
 import styles from './Landing.module.css';
 
-// Core 3 features — each routes somewhere meaningful
+// Core 3 features
 const FEATURES = [
   {
     icon: <Zap size={24} aria-hidden="true" />,
@@ -41,21 +41,129 @@ const PERSONAS = [
   { emoji: '🎉', label: 'Nightlife Lover', desc: 'Bars, clubs & late-night eats' },
 ];
 
+// Kazakhstan hero photos — stunning landscapes
+const KAZAKHSTAN_PHOTOS = [
+  {
+    url: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=900&q=85',
+    caption: 'Charyn Canyon, Kazakhstan',
+    alt: 'Charyn Canyon red rock formations in Kazakhstan',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=900&q=85',
+    caption: 'Big Almaty Lake, Kazakhstan',
+    alt: 'Turquoise alpine Big Almaty Lake surrounded by mountains',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1590766940554-b0e6d3231bca?w=900&q=85',
+    caption: 'Kolsai Lakes, Kazakhstan',
+    alt: 'Emerald Kolsai Lakes nestled in Tian Shan mountains',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=900&q=85',
+    caption: 'Tian Shan Mountains, Kazakhstan',
+    alt: 'Snow-capped Tian Shan mountain peaks in Kazakhstan',
+  },
+];
+
+// Popular destinations — includes Kazakhstan gems
 const SAMPLE_DESTINATIONS = [
+  { name: 'Almaty', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=600&q=80', tag: 'Alpine' },
+  { name: 'Charyn Canyon', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=600&q=80', tag: 'Adventure' },
   { name: 'Varanasi', country: 'India', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80', tag: 'Spiritual' },
   { name: 'Goa', country: 'India', img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80', tag: 'Beach' },
   { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80', tag: 'Culture' },
+  { name: 'Kolsai Lakes', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1590766940554-b0e6d3231bca?w=600&q=80', tag: 'Nature' },
 ];
 
 const EXPLORE_CITIES = [
   { name: 'Mumbai', tz: 'Asia/Kolkata', bbox: '72.75,18.85,73.05,19.25' },
+  { name: 'Almaty', tz: 'Asia/Almaty', bbox: '76.7,43.1,77.1,43.5' },
   { name: 'London', tz: 'Europe/London', bbox: '-0.489,51.28,0.236,51.68' },
   { name: 'New York', tz: 'America/New_York', bbox: '-74.25,40.47,-73.70,40.91' },
   { name: 'Tokyo', tz: 'Asia/Tokyo', bbox: '139.56,35.52,139.91,35.81' },
   { name: 'Dubai', tz: 'Asia/Dubai', bbox: '55.10,24.95,55.50,25.35' },
 ];
 
-// Interactive map component — click a city to see its map + clock, then plan
+// ── Kazakhstan Photo Carousel ──
+function KazakhstanCarousel() {
+  const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
+
+  const prev = useCallback((e) => {
+    e.stopPropagation();
+    setCurrent(i => (i - 1 + KAZAKHSTAN_PHOTOS.length) % KAZAKHSTAN_PHOTOS.length);
+  }, []);
+
+  const next = useCallback((e) => {
+    e.stopPropagation();
+    setCurrent(i => (i + 1) % KAZAKHSTAN_PHOTOS.length);
+  }, []);
+
+  const photo = KAZAKHSTAN_PHOTOS[current];
+
+  return (
+    <div className={styles.carousel} aria-label="Kazakhstan destinations gallery">
+      <div className={styles.carouselTrack} style={{ transform: `translateX(-${current * 100}%)` }}>
+        {KAZAKHSTAN_PHOTOS.map((p, i) => (
+          <img
+            key={i}
+            src={p.url}
+            alt={p.alt}
+            className={styles.carouselImg}
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        ))}
+      </div>
+
+      {/* Caption */}
+      <div className={styles.carouselCaption}>
+        <MapPin size={12} aria-hidden="true" />
+        {photo.caption}
+      </div>
+
+      {/* Navigation */}
+      <button
+        className={`${styles.carouselBtn} ${styles.carouselPrev}`}
+        onClick={prev}
+        aria-label="Previous photo"
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        className={`${styles.carouselBtn} ${styles.carouselNext}`}
+        onClick={next}
+        aria-label="Next photo"
+      >
+        <ChevronRight size={18} />
+      </button>
+
+      {/* Dots */}
+      <div className={styles.carouselDots} role="tablist" aria-label="Photo navigation">
+        {KAZAKHSTAN_PHOTOS.map((_, i) => (
+          <button
+            key={i}
+            className={`${styles.carouselDot} ${i === current ? styles.dotActive : ''}`}
+            onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+            role="tab"
+            aria-selected={i === current}
+            aria-label={`Photo ${i + 1}: ${KAZAKHSTAN_PHOTOS[i].caption}`}
+          />
+        ))}
+      </div>
+
+      {/* Plan this destination CTA */}
+      <button
+        className={styles.carouselPlan}
+        onClick={() => navigate(`/plan?dest=${encodeURIComponent('Kazakhstan')}`)}
+        aria-label="Plan a trip to Kazakhstan"
+      >
+        Plan Kazakhstan Trip <ArrowRight size={14} aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
+// ── Interactive Map ──
 function ExploreMap() {
   const navigate = useNavigate();
   const [activeCity, setActiveCity] = useState(EXPLORE_CITIES[0]);
@@ -76,10 +184,10 @@ function ExploreMap() {
         <p className={styles.mapDesc}>
           Select a city to see its local time and map. Click to start planning a trip there.
         </p>
-        
+
         <div className={styles.cityButtons}>
           {EXPLORE_CITIES.map(c => (
-            <button 
+            <button
               key={c.name}
               className={`${styles.cityBtn} ${activeCity.name === c.name ? styles.activeCity : ''}`}
               onClick={() => setActiveCity(c)}
@@ -122,70 +230,69 @@ function ExploreMap() {
 }
 
 export default function Landing() {
+  const navigate = useNavigate();
+
+  // Navigate to /plan with dest param — the Planner page reads ?dest= and sets state
+  const handleDestClick = useCallback((destName) => {
+    navigate(`/plan?dest=${encodeURIComponent(destName)}`);
+  }, [navigate]);
+
   return (
     <div className={styles.page}>
 
       {/* ── HERO ── */}
       <section className={styles.hero} aria-labelledby="hero-heading">
         <div className="container">
-          <div className={styles.heroContent}>
-            <div className={`badge badge-primary ${styles.heroBadge} animate-fade-in-up`}>
-              <Star size={12} aria-hidden="true" /> Powered by Google Gemini
-            </div>
-            <h1 id="hero-heading" className={`${styles.heroTitle} animate-fade-in-up`}>
-              Your AI Travel<br />
-              <span className={styles.heroAccent}>Companion</span>
-            </h1>
-            <p className={`${styles.heroSubtitle} animate-fade-in-up`}>
-              Describe your dream trip in plain language. Wanderly crafts a personalized, budget-smart itinerary in seconds — powered by Google Gemini AI.
-            </p>
+          <div className={styles.heroGrid}>
+            {/* Left: text content */}
+            <div className={styles.heroContent}>
+              <div className={`badge badge-primary ${styles.heroBadge} animate-fade-in-up`}>
+                <Star size={12} aria-hidden="true" /> Powered by Google Gemini
+              </div>
+              <h1 id="hero-heading" className={`${styles.heroTitle} animate-fade-in-up`}>
+                Your AI Travel<br />
+                <span className={styles.heroAccent}>Companion</span>
+              </h1>
+              <p className={`${styles.heroSubtitle} animate-fade-in-up`}>
+                Describe your dream trip in plain language. Wanderly crafts a personalized, budget-smart itinerary in seconds — powered by Google Gemini AI.
+              </p>
 
-            <div className={`${styles.heroCta} animate-fade-in-up`}>
-              <Link to="/plan" className="btn btn-primary btn-lg" aria-label="Start planning your trip now">
-                Plan My Trip <ArrowRight size={18} aria-hidden="true" />
-              </Link>
-              <a href="#features" className="btn btn-outline btn-lg">
-                See How It Works
-              </a>
-            </div>
-          </div>
+              <div className={`${styles.heroCta} animate-fade-in-up`}>
+                <Link to="/plan" className="btn btn-primary btn-lg" aria-label="Start planning your trip now">
+                  Plan My Trip <ArrowRight size={18} aria-hidden="true" />
+                </Link>
+                <a href="#features" className="btn btn-outline btn-lg">
+                  See How It Works
+                </a>
+              </div>
 
-          {/* Hero visual prompt card */}
-          <div className={`${styles.heroVisual} animate-scale-in`} aria-hidden="true">
-            <div className={styles.promptCard}>
-              <div className={styles.promptHeader}>
-                <div className={styles.promptDots}>
-                  <span /><span /><span />
-                </div>
-                <span className={styles.promptLabel}>AI Travel Prompt</span>
+              <div className={`${styles.kazakhTag} animate-fade-in-up`}>
+                <span>✨ Featuring Kazakhstan — Central Asia's hidden gem</span>
               </div>
-              <div className={styles.promptBody}>
-                <p className={styles.promptText}>
-                  "Plan a 3-day spiritual trip to Varanasi for ₹8,000. I prefer walking, hate crowds in the morning, and love local street food."
-                </p>
-              </div>
-              <div className={styles.promptResponse}>
-                <div className={styles.typingDot} />
-                <span>Wanderly is crafting your itinerary…</span>
-              </div>
+            </div>
+
+            {/* Right: Kazakhstan photo carousel */}
+            <div className={`${styles.heroVisual} animate-scale-in`}>
+              <KazakhstanCarousel />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── DESTINATIONS ── */}
+      {/* ── POPULAR DESTINATIONS ── */}
       <section className={styles.destinations} aria-labelledby="destinations-heading">
         <div className="container">
           <h2 id="destinations-heading" className={styles.sectionHeading}>Popular Destinations</h2>
+          <p className={styles.destSubtitle}>Click any destination to instantly pre-fill your trip planner</p>
           <div className={`${styles.destGrid} stagger`}>
             {SAMPLE_DESTINATIONS.map((d) => (
-              <Link
-                to={`/plan?dest=${encodeURIComponent(d.name)}`}
+              <button
                 key={d.name}
                 className={styles.destCard}
-                aria-label={`Plan a trip to ${d.name}, ${d.country}`}
+                onClick={() => handleDestClick(d.name)}
+                aria-label={`Plan a trip to ${d.name}, ${d.country} — click to open planner`}
               >
-                <img src={d.img} alt={`${d.name} cityscape`} className={styles.destImg} loading="lazy" />
+                <img src={d.img} alt={`${d.name} landscape`} className={styles.destImg} loading="lazy" />
                 <div className={styles.destOverlay}>
                   <span className={`badge badge-primary ${styles.destTag}`}>{d.tag}</span>
                   <div>
@@ -194,8 +301,11 @@ export default function Landing() {
                       <MapPin size={12} aria-hidden="true" /> {d.country}
                     </div>
                   </div>
+                  <div className={styles.destCta}>
+                    Plan this trip <ArrowRight size={12} aria-hidden="true" />
+                  </div>
                 </div>
-              </Link>
+              </button>
             ))}
           </div>
         </div>
@@ -234,7 +344,6 @@ export default function Landing() {
               </Link>
             ))}
           </div>
-          {/* Accessibility — concise footnote */}
           <p className={styles.a11yNote} aria-label="Accessibility commitment">
             ♿ Built with full keyboard navigation, ARIA screen-reader support, and high-contrast mode.
           </p>

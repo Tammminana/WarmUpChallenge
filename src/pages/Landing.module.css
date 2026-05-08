@@ -10,7 +10,7 @@
   position: relative;
 }
 
-.hero .container {
+.heroGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-16);
@@ -88,8 +88,134 @@
   background: var(--surface-glass-border);
 }
 
-/* Prompt card */
-.heroVisual { position: relative; }
+.kazakhTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20,184,166,0.1);
+  border: 1px solid rgba(20,184,166,0.3);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  color: var(--teal-400, #14b8a6);
+  font-weight: 600;
+  width: fit-content;
+}
+
+/* ── CAROUSEL ── */
+.heroVisual {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  aspect-ratio: 4/3;
+  min-height: 380px;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+}
+
+.carouselTrack {
+  display: flex;
+  height: 100%;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carouselImg {
+  min-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.carouselCaption {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 3;
+}
+
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.carouselBtn:hover { background: rgba(99,102,241,0.7); border-color: var(--primary-500); }
+.carouselPrev { left: 10px; }
+.carouselNext { right: 10px; }
+
+.carouselDots {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 4;
+}
+
+.carouselDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.dotActive { background: white; width: 20px; border-radius: 4px; }
+
+.carouselPlan {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--primary-600);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 7px 18px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 4;
+  transition: all var(--transition-fast);
+}
+.carouselPlan:hover { background: var(--primary-500); transform: translateX(-50%) scale(1.04); }
 
 .promptCard {
   background: var(--surface-card);
@@ -168,6 +294,12 @@
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+
+.destSubtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
   margin-bottom: var(--space-6);
 }
 
@@ -177,16 +309,22 @@
   gap: var(--space-4);
 }
 
+/* destCard is now a <button> */
 .destCard {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
   aspect-ratio: 4/3;
   display: block;
-  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
 }
 
-.destCard:hover .destImg { transform: scale(1.05); }
+.destCard:hover .destImg { transform: scale(1.06); }
+.destCard:focus-visible { outline: 2px solid var(--primary-400); outline-offset: 3px; }
 
 .destImg {
   width: 100%; height: 100%;
@@ -217,6 +355,28 @@
   gap: var(--space-1);
   font-size: 0.85rem;
   color: rgba(255,255,255,0.7);
+}
+
+/* CTA row that appears on hover */
+.destCta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: white;
+  background: var(--primary-600);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all var(--transition-fast);
+}
+.destCard:hover .destCta,
+.destCard:focus-visible .destCta {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ── FEATURES ── */
@@ -421,11 +581,16 @@
 .mapFrame { width: 100%; height: 320px; border: none; display: block; pointer-events: none; }
 
 /* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .destGrid { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 900px) {
-  .hero .container { grid-template-columns: 1fr; gap: var(--space-10); }
-  .heroVisual { order: -1; }
+  .heroGrid { grid-template-columns: 1fr; gap: var(--space-10); }
+  .heroVisual { order: -1; min-height: 280px; aspect-ratio: 16/9; }
   .featGrid { grid-template-columns: 1fr; }
-  .destGrid, .personaGrid { grid-template-columns: repeat(2, 1fr); }
+  .destGrid { grid-template-columns: repeat(2, 1fr); }
+  .personaGrid { grid-template-columns: repeat(2, 1fr); }
   .mapExplore { grid-template-columns: 1fr; }
   .mapFrame { height: 250px; }
 }
@@ -433,6 +598,7 @@
 @media (max-width: 600px) {
   .hero { padding: 120px 0 60px; }
   .heroCta { flex-direction: column; }
-  .destGrid, .personaGrid { grid-template-columns: 1fr; }
+  .destGrid { grid-template-columns: repeat(2, 1fr); }
+  .personaGrid { grid-template-columns: 1fr; }
+  .heroVisual { min-height: 220px; }
 }
-
