@@ -55,14 +55,19 @@ const EXPLORE_CITIES = [
   { name: 'Dubai', tz: 'Asia/Dubai', bbox: '55.10,24.95,55.50,25.35' },
 ];
 
-// Interactive map component — click a location to start planning
+// Interactive map component — click a city to see its map + clock, then plan
 function ExploreMap() {
   const navigate = useNavigate();
   const [activeCity, setActiveCity] = useState(EXPLORE_CITIES[0]);
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_KEY;
 
   const handleMapClick = useCallback(() => {
     navigate(`/plan?dest=${encodeURIComponent(activeCity.name)}`);
   }, [navigate, activeCity]);
+
+  const mapSrc = apiKey
+    ? `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(activeCity.name)}&zoom=11`
+    : `https://www.openstreetmap.org/export/embed.html?bbox=${activeCity.bbox}&layer=mapnik`;
 
   return (
     <div className={styles.mapExplore}>
@@ -78,8 +83,9 @@ function ExploreMap() {
               key={c.name}
               className={`${styles.cityBtn} ${activeCity.name === c.name ? styles.activeCity : ''}`}
               onClick={() => setActiveCity(c)}
+              aria-label={`Select ${c.name}`}
             >
-              {c.name}
+              <MapPin size={12} /> {c.name}
             </button>
           ))}
         </div>
@@ -92,13 +98,15 @@ function ExploreMap() {
           Plan Trip to {activeCity.name} <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
-      <div className={styles.mapRight}>
+      <div className={styles.mapRight} onClick={handleMapClick} role="button" tabIndex={0} aria-label={`Click to plan trip to ${activeCity.name}`} style={{ cursor: 'pointer' }}>
         <iframe
-          src={`https://www.openstreetmap.org/export/embed.html?bbox=${activeCity.bbox}&layer=mapnik`}
-          title={`${activeCity.name} Map - Click to explore`}
+          src={mapSrc}
+          title={`${activeCity.name} Map`}
           className={styles.mapFrame}
           loading="lazy"
-          aria-label={`Interactive map of ${activeCity.name} for trip planning`}
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+          aria-label={`Interactive map of ${activeCity.name}`}
         />
       </div>
     </div>

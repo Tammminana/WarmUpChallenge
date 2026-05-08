@@ -3,57 +3,53 @@ import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
   Accessibility, Info, CheckCircle2, Plus, Clock, Cloud,
-  ExternalLink, ChevronDown, Search, Save
+  ExternalLink, ChevronDown, Search, Save, Users, Moon, Sun
 } from 'lucide-react';
 import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
 import styles from './Planner.module.css';
 
-// Typewriter placeholder texts
+// Typewriter placeholder texts for extra context field
 const SEARCH_HINTS = [
-  'Search a city... e.g. Varanasi, Goa, Jaipur',
-  'Search places... e.g. temples, beaches, forts',
-  'Search hotels... e.g. budget stays in Udaipur',
-  'Search experiences... e.g. street food in Delhi',
-  'Search trips... e.g. 3 days in Coorg for ₹5,000',
-  'Search adventures... e.g. trekking in Manali',
+  'Add extra details... e.g. vegetarian food only',
+  'Preferences... e.g. avoid crowded places',
+  'Special requests... e.g. wheelchair accessible',
+  'Vibes... e.g. romantic getaway, party mode',
+  'Budget style... e.g. luxury, backpacker, mid-range',
 ];
 
-function AnimatedSearchInput({ value, onChange, disabled }) {
+function AnimatedSearchInput({ value, onChange, disabled, placeholder }) {
   const [displayText, setDisplayText] = useState('');
   const [hintIndex, setHintIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
   const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    if (value) return; // stop animation when user is typing
-
+    if (value || disabled) return;
     const currentHint = SEARCH_HINTS[hintIndex];
     let timer;
-
     if (isTyping) {
       if (charIndex < currentHint.length) {
         timer = setTimeout(() => {
           setDisplayText(currentHint.slice(0, charIndex + 1));
           setCharIndex((c) => c + 1);
-        }, 45); // typing speed
+        }, 45);
       } else {
-        timer = setTimeout(() => setIsTyping(false), 1800); // pause before erasing
+        timer = setTimeout(() => setIsTyping(false), 1800);
       }
     } else {
       if (charIndex > 0) {
         timer = setTimeout(() => {
           setDisplayText(currentHint.slice(0, charIndex - 1));
           setCharIndex((c) => c - 1);
-        }, 25); // erase speed (faster)
+        }, 25);
       } else {
         setHintIndex((i) => (i + 1) % SEARCH_HINTS.length);
         setIsTyping(true);
       }
     }
-
     return () => clearTimeout(timer);
-  }, [charIndex, isTyping, hintIndex, value]);
+  }, [charIndex, isTyping, hintIndex, value, disabled]);
 
   return (
     <div className={styles.searchInputWrapper}>
@@ -66,39 +62,47 @@ function AnimatedSearchInput({ value, onChange, disabled }) {
         type="text"
         value={value}
         onChange={onChange}
-        placeholder={value ? '' : displayText + '|'}
+        placeholder={value ? '' : (placeholder || displayText + '|')}
         className={styles.input}
         disabled={disabled}
-        aria-label="Describe your travel plan"
+        aria-label="Additional trip preferences"
         aria-describedby="search-hint"
       />
     </div>
   );
 }
 
-// Inline OpenStreetMap embed using Nominatim for coordinates
+// Google Maps embed (uses Maps Embed API — free tier)
 function MapEmbed({ destination }) {
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_KEY;
   const [mapUrl, setMapUrl] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!destination) return;
     const city = destination.split(',')[0].trim();
-    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`, {
-      headers: { 'Accept-Language': 'en' }
-    })
-      .then(r => r.json())
-      .then(data => {
-        if (data?.[0]) {
-          const { lat, lon } = data[0];
-          const zoom = 12;
-          const bbox = `${parseFloat(lon) - 0.15},${parseFloat(lat) - 0.1},${parseFloat(lon) + 0.15},${parseFloat(lat) + 0.1}`;
-          setMapUrl(`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`);
-        }
-        setLoading(false);
+
+    if (apiKey) {
+      // Use Google Maps Embed API
+      setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(destination)}&zoom=12`);
+      setLoading(false);
+    } else {
+      // Fallback to OpenStreetMap
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`, {
+        headers: { 'Accept-Language': 'en' }
       })
-      .catch(() => setLoading(false));
-  }, [destination]);
+        .then(r => r.json())
+        .then(data => {
+          if (data?.[0]) {
+            const { lat, lon } = data[0];
+            const bbox = `${parseFloat(lon) - 0.15},${parseFloat(lat) - 0.1},${parseFloat(lon) + 0.15},${parseFloat(lat) + 0.1}`;
+            setMapUrl(`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`);
+          }
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    }
+  }, [destination, apiKey]);
 
   return (
     <div className={styles.mapContainer}>
@@ -106,11 +110,13 @@ function MapEmbed({ destination }) {
         <MapPin size={14} aria-hidden="true" />
         <span>{destination}</span>
         <a
-          href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(destination)}`}
+          href={apiKey
+            ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`
+            : `https://www.openstreetmap.org/search?query=${encodeURIComponent(destination)}`}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.mapLink}
-          aria-label={`Open ${destination} on OpenStreetMap`}
+          aria-label={`Open ${destination} on map`}
         >
           <ExternalLink size={12} /> Open Map
         </a>
@@ -126,6 +132,8 @@ function MapEmbed({ destination }) {
           title={`Map of ${destination}`}
           className={styles.mapIframe}
           loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
           aria-label={`Interactive map showing ${destination}`}
         />
       ) : (
@@ -135,30 +143,27 @@ function MapEmbed({ destination }) {
   );
 }
 
-// Generates a Google Calendar link for a day's activities
+// Generates a Google Calendar link with proper dates
 function makeCalendarUrl(destination, day, activities, tripStartDate = null) {
   const title = encodeURIComponent(`Day ${day.day}: ${day.theme} — ${destination}`);
   const details = encodeURIComponent(
     activities.map(a => `${a.time} ${a.name}: ${a.description}`).join('\n')
   );
-
-  // Build proper date params if we have a trip start date
   let dateParams = '';
   if (tripStartDate) {
     const startDate = new Date(tripStartDate);
     startDate.setDate(startDate.getDate() + (day.day - 1));
-    // Format: YYYYMMDDTHHMMSS/YYYYMMDDTHHMMSS
     const formatDate = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    const dayStart = new Date(startDate);
-    dayStart.setHours(8, 0, 0);
-    const dayEnd = new Date(startDate);
-    dayEnd.setHours(22, 0, 0);
+    const dayStart = new Date(startDate); dayStart.setHours(8, 0, 0);
+    const dayEnd = new Date(startDate); dayEnd.setHours(22, 0, 0);
     dateParams = `&dates=${formatDate(dayStart)}/${formatDate(dayEnd)}`;
   }
-
   const location = encodeURIComponent(destination);
   return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}${dateParams}`;
 }
+
+const CURRENCIES = ['₹ INR', '$ USD', '€ EUR', '£ GBP', '¥ JPY', 'د.إ AED'];
+const VIBES = ['Budget Explorer', 'Luxury Traveler', 'Adventure Seeker', 'Culture Enthusiast', 'Foodie', 'Night Owl', 'Family Trip', 'Solo Wanderer'];
 
 export default function Planner() {
   const [searchParams] = useSearchParams();
@@ -170,25 +175,52 @@ export default function Planner() {
     isRainMode, setIsRainMode, saveTrip
   } = useTrip();
 
-  const [prompt, setPrompt] = useState('');
+  // Structured inputs (above search bar)
+  const [destination, setDestination] = useState('');
+  const [numDays, setNumDays] = useState('3');
+  const [budget, setBudget] = useState('');
+  const [currency, setCurrency] = useState('₹ INR');
+  const [members, setMembers] = useState('1');
+  const [vibe, setVibe] = useState('');
+  const [isNightPerson, setIsNightPerson] = useState(false);
+
+  // Free text for extra preferences
+  const [extraPrefs, setExtraPrefs] = useState('');
+
   const [rainLoading, setRainLoading] = useState(false);
   const [showSave, setShowSave] = useState(false);
   const [tripDate, setTripDate] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const resultsRef = useRef(null);
 
+  // Pre-fill from URL params (from Landing page clicks)
   useEffect(() => {
     const dest = searchParams.get('dest');
     const persona = searchParams.get('persona');
-    if (dest || persona) {
-      setPrompt(`Plan a trip to ${dest || 'a surprise destination'} as a ${persona || 'traveler'}.`);
-    }
+    if (dest) setDestination(dest);
+    if (persona) setVibe(persona);
   }, [searchParams]);
+
+  // Build the AI prompt from structured inputs
+  const buildPrompt = useCallback(() => {
+    const currSymbol = currency.split(' ')[0];
+    let prompt = `Plan a ${numDays}-day trip to ${destination}`;
+    if (budget) prompt += ` with a budget of ${currSymbol}${budget}`;
+    if (parseInt(members) > 1) prompt += ` for ${members} people`;
+    if (vibe) prompt += `, traveling as a ${vibe}`;
+    if (isNightPerson) prompt += `. I'm a night person — prefer late dinners, nightlife, and late morning starts`;
+    if (extraPrefs.trim()) prompt += `. ${extraPrefs.trim()}`;
+    prompt += '.';
+    return prompt;
+  }, [destination, numDays, budget, currency, members, vibe, isNightPerson, extraPrefs]);
+
+  const isFormReady = destination.trim().length >= 2;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!prompt.trim() || loading) return;
+    if (!isFormReady || loading) return;
     try {
+      const prompt = buildPrompt();
       const data = await generateItinerary(prompt);
       setItinerary(data);
       setActiveDay(0);
@@ -221,10 +253,7 @@ export default function Planner() {
 
   const handleSaveTrip = (e) => {
     e.preventDefault();
-    if (!tripDate) {
-      alert("Please select a date first.");
-      return;
-    }
+    if (!tripDate) { alert("Please select a date first."); return; }
     saveTrip(itinerary, new Date(tripDate).toISOString());
     setSaveSuccess(true);
     setShowSave(false);
@@ -254,24 +283,109 @@ export default function Planner() {
             <div className={styles.intro}>
               <h1 id="planner-heading" className="section-title">Where to next?</h1>
               <p className="section-subtitle">
-                Tell Gemini your trip: destination, days, budget, vibe. It builds your complete itinerary instantly.
+                Fill in your trip details below. Wanderly AI builds your complete itinerary instantly.
               </p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className={styles.form} role="search">
+            {/* Structured Inputs */}
+            <div className={styles.structuredInputs}>
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  <MapPin size={14} /> Destination *
+                </label>
+                <input
+                  type="text"
+                  value={destination}
+                  onChange={e => setDestination(e.target.value)}
+                  placeholder="e.g. Goa, Jaipur, Paris"
+                  className={styles.structuredField}
+                  required
+                  disabled={loading}
+                  aria-label="Trip destination"
+                />
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  <Calendar size={14} /> Days
+                </label>
+                <select value={numDays} onChange={e => setNumDays(e.target.value)} className={styles.structuredField} disabled={loading} aria-label="Number of days">
+                  {[1,2,3,4,5,6,7,10,14].map(n => <option key={n} value={n}>{n} {n===1 ? 'day' : 'days'}</option>)}
+                </select>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  <Wallet size={14} /> Budget
+                </label>
+                <div className={styles.budgetRow}>
+                  <select value={currency} onChange={e => setCurrency(e.target.value)} className={styles.currencySelect} disabled={loading} aria-label="Currency">
+                    {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <input
+                    type="number"
+                    value={budget}
+                    onChange={e => setBudget(e.target.value)}
+                    placeholder="15000"
+                    className={styles.structuredField}
+                    min="0"
+                    disabled={loading}
+                    aria-label="Budget amount"
+                  />
+                </div>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  <Users size={14} /> Members
+                </label>
+                <select value={members} onChange={e => setMembers(e.target.value)} className={styles.structuredField} disabled={loading} aria-label="Number of travelers">
+                  {[1,2,3,4,5,6,8,10].map(n => <option key={n} value={n}>{n} {n===1 ? 'person' : 'people'}</option>)}
+                </select>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  <Sparkles size={14} /> Vibe
+                </label>
+                <select value={vibe} onChange={e => setVibe(e.target.value)} className={styles.structuredField} disabled={loading} aria-label="Travel style">
+                  <option value="">Choose a vibe...</option>
+                  {VIBES.map(v => <option key={v} value={v}>{v}</option>)}
+                </select>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  {isNightPerson ? <Moon size={14} /> : <Sun size={14} />} Schedule
+                </label>
+                <button
+                  type="button"
+                  className={`${styles.toggleBtn} ${isNightPerson ? styles.nightActive : ''}`}
+                  onClick={() => setIsNightPerson(!isNightPerson)}
+                  disabled={loading}
+                  aria-label={isNightPerson ? 'Night owl mode active' : 'Early bird mode'}
+                >
+                  {isNightPerson ? '🌙 Night Owl' : '☀️ Early Bird'}
+                </button>
+              </div>
+            </div>
+
+            {/* Extra preferences — animated search */}
             <div className={styles.inputWrapper}>
               <AnimatedSearchInput
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                disabled={loading}
+                value={extraPrefs}
+                onChange={(e) => setExtraPrefs(e.target.value)}
+                disabled={loading || !isFormReady}
+                placeholder={!isFormReady ? 'Fill destination above first...' : undefined}
               />
               <button
                 type="submit"
                 id="generate-btn"
                 className={`btn btn-primary ${styles.submitBtn}`}
-                disabled={loading || !prompt.trim()}
-                aria-label={loading ? 'Generating itinerary…' : itinerary ? 'Re-generate itinerary' : 'Generate itinerary'}
+                disabled={loading || !isFormReady}
+                aria-label={loading ? 'Generating itinerary…' : 'Generate itinerary'}
               >
                 {loading
                   ? <Loader2 size={20} className={styles.spinnerIcon} aria-hidden="true" />
@@ -280,7 +394,9 @@ export default function Planner() {
               </button>
             </div>
             <p id="search-hint" className={styles.searchHint}>
-              💡 Try: &quot;4 days in Goa for ₹12,000, beach vibes, budget hotel&quot;
+              {isFormReady
+                ? `✨ Ready to plan ${numDays} days in ${destination}${vibe ? ` as ${vibe}` : ''}`
+                : '👆 Enter a destination to get started'}
             </p>
           </form>
 
@@ -321,6 +437,7 @@ export default function Planner() {
                   <span><MapPin size={14} aria-hidden="true" /> {itinerary.destination}</span>
                   <span><Calendar size={14} aria-hidden="true" /> {itinerary.duration}</span>
                   <span><Wallet size={14} aria-hidden="true" /> {itinerary.totalBudget}</span>
+                  {parseInt(members) > 1 && <span><Users size={14} aria-hidden="true" /> {members} travelers</span>}
                 </div>
                 {itinerary.highlights && (
                   <div className={styles.highlights}>
@@ -370,12 +487,15 @@ export default function Planner() {
                   />
                 </div>
                 <div className={styles.budgetMeta}>
-                  <span>Marked spent: ₹{totalSpent}</span>
-                  <span>Est. total: ₹{Math.round(totalEstimated)}</span>
+                  <span>Marked spent: {currency.split(' ')[0]}{totalSpent}</span>
+                  <span>Est. total: {currency.split(' ')[0]}{Math.round(totalEstimated)}</span>
                 </div>
                 {isOverBudget && (
                   <p className={styles.budgetAlert} role="alert">⚠️ You've exceeded the estimated budget!</p>
                 )}
+                <Link to="/budget" className={`btn btn-outline btn-sm ${styles.budgetLink}`}>
+                  <Wallet size={12} /> Open Full Budget Tracker
+                </Link>
               </div>
             </header>
 

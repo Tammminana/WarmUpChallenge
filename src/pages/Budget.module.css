@@ -11,10 +11,11 @@
 .leftPanel { display: flex; flex-direction: column; gap: var(--space-6); position: sticky; top: 100px; }
 
 /* ── LEFT PANEL WIDGETS ── */
-.budgetInput, .summaryCard, .addForm, .peopleSection { padding: var(--space-5); border-radius: var(--radius-lg); }
+.budgetInput, .summaryCard, .addForm, .peopleSection, .linkSection { padding: var(--space-5); border-radius: var(--radius-lg); }
 .label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: var(--space-2); display: block; }
-.field { width: 100%; background: var(--surface-glass); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-md); color: var(--text-primary); padding: var(--space-3) var(--space-4); font-size: 0.95rem; transition: border-color var(--transition-base); }
+.field { width: 100%; background: var(--surface-glass); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-md); color: var(--text-primary); padding: var(--space-3) var(--space-4); font-size: 0.95rem; transition: border-color var(--transition-base); font-family: inherit; appearance: none; -webkit-appearance: none; }
 .field:focus { border-color: var(--primary-500); outline: none; }
+.field option { background: var(--surface-bg); color: var(--text-primary); padding: var(--space-2); }
 
 .summaryCard { display: flex; flex-direction: column; gap: var(--space-3); }
 .summaryRow { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-secondary); }
@@ -23,10 +24,14 @@
 .progressFill { height: 100%; border-radius: var(--radius-full); transition: width 0.5s ease; }
 .statusBadge { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; text-align: center; }
 
+/* Link to Itinerary */
+.linkSection { display: flex; flex-direction: column; gap: var(--space-3); }
+.linkedInfo { font-size: 0.8rem; color: var(--primary-400); margin-top: var(--space-1); }
+
 /* People Section */
 .peopleSection { display: flex; flex-direction: column; gap: var(--space-3); }
 .peopleList { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.personTag { background: rgba(99,102,241,0.2); color: var(--primary-300); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
+.personTag { background: rgba(99,102,241,0.2); color: var(--primary-300); padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.8rem; display: flex; align-items: center; gap: 6px; }
 .removePerson { background: transparent; border: none; color: inherit; cursor: pointer; font-size: 1rem; opacity: 0.7; }
 .removePerson:hover { opacity: 1; }
 .personForm { display: flex; gap: var(--space-2); }
@@ -34,8 +39,20 @@
 /* Add/Edit Form */
 .addForm { display: flex; flex-direction: column; gap: var(--space-3); }
 .formTitle { font-size: 0.95rem; font-weight: 700; display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
-.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: center; }
+.formRow { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); align-items: end; }
+.amountInput { position: relative; display: flex; align-items: center; }
+.currBadge { position: absolute; left: 12px; font-weight: 700; color: var(--primary-400); font-size: 0.9rem; z-index: 1; pointer-events: none; }
+.amountInput .field { padding-left: 32px; }
 .editActions { display: flex; gap: var(--space-3); margin-top: var(--space-2); }
+
+/* Split Chips */
+.splitHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); }
+.selectAllBtn { background: none; border: none; color: var(--primary-400); font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; }
+.splitChips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.splitChip { padding: 6px 12px; border-radius: var(--radius-full); border: 1px solid var(--surface-glass-border); background: var(--surface-glass); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all var(--transition-fast); }
+.splitChip:hover { border-color: var(--primary-400); }
+.splitActive { background: rgba(99,102,241,0.25); border-color: var(--primary-500); color: var(--primary-300); }
+.splitHint { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
 
 /* ── RIGHT PANEL ── */
 .rightPanel { display: flex; flex-direction: column; gap: var(--space-5); }
