@@ -164,7 +164,11 @@ function makeCalendarUrl(destination, day, activities, tripStartDate = null) {
 }
 
 const CURRENCIES = ['₹ INR', '$ USD', '€ EUR', '£ GBP', '¥ JPY', 'د.إ AED'];
-const VIBES = ['Budget Explorer', 'Luxury Traveler', 'Adventure Seeker', 'Culture Enthusiast', 'Foodie', 'Night Owl', 'Family Trip', 'Solo Wanderer'];
+const VIBES = [
+  'Budget Explorer', 'History Buff', 'Luxury Foodie', 'Wellness Seeker', 
+  'Photo Hunter', 'Nightlife Lover', 'Luxury Traveler', 'Adventure Seeker', 
+  'Culture Enthusiast', 'Foodie', 'Night Owl', 'Family Trip', 'Solo Wanderer'
+];
 
 export default function Planner() {
   const [searchParams] = useSearchParams();
@@ -347,7 +351,7 @@ export default function Planner() {
                 </select>
               </div>
 
-              <div className={styles.inputGroup}>
+              <div className={`${styles.inputGroup} ${styles.vibeGroup}`}>
                 <label className={styles.inputLabel}>
                   <Sparkles size={14} /> Vibe
                 </label>
@@ -357,9 +361,8 @@ export default function Planner() {
                 </select>
               </div>
 
-              {/* Schedule + Hotels — side-by-side half-width toggles */}
-              <div className={styles.toggleRow}>
-                <div className={styles.inputGroup}>
+              {/* Schedule + Hotels — beside vibe on 2nd row */}
+              <div className={styles.inputGroup}>
                   <label className={styles.inputLabel}>
                     {isNightPerson ? <Moon size={14} /> : <Sun size={14} />} Schedule
                   </label>
@@ -388,7 +391,6 @@ export default function Planner() {
                     {includeHotels ? '🏨 Hotels On' : '🏨 Add Hotels'}
                   </button>
                 </div>
-              </div>
             </div>
 
             {/* Weather preview for destination + first day */}

@@ -34,10 +34,10 @@
   gap: var(--space-4);
 }
 
-/* Structured Inputs Grid — 3 cols main inputs + 1 row for toggles */
+/* Structured Inputs Grid — 4 cols */
 .structuredInputs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
   background: var(--surface-card);
   border: 1px solid var(--surface-glass-border);
@@ -45,12 +45,8 @@
   padding: var(--space-5);
 }
 
-/* Toggle row: Schedule + Hotels side by side, each half width */
-.toggleRow {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+.vibeGroup {
+  grid-column: span 2;
 }
 
 .inputGroup {
