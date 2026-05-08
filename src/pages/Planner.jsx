@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
@@ -9,7 +9,7 @@ import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
 import styles from './Planner.module.css';
 
-// Animated rotating placeholder texts for the search input
+// Typewriter placeholder texts
 const SEARCH_HINTS = [
   'Search a city... e.g. Varanasi, Goa, Jaipur',
   'Search places... e.g. temples, beaches, forts',
@@ -20,24 +20,45 @@ const SEARCH_HINTS = [
 ];
 
 function AnimatedSearchInput({ value, onChange, disabled }) {
+  const [displayText, setDisplayText] = useState('');
   const [hintIndex, setHintIndex] = useState(0);
-  const [spinning, setSpinning] = useState(false);
+  const [isTyping, setIsTyping] = useState(true);
+  const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSpinning(true);
-      setTimeout(() => {
+    if (value) return; // stop animation when user is typing
+
+    const currentHint = SEARCH_HINTS[hintIndex];
+    let timer;
+
+    if (isTyping) {
+      if (charIndex < currentHint.length) {
+        timer = setTimeout(() => {
+          setDisplayText(currentHint.slice(0, charIndex + 1));
+          setCharIndex((c) => c + 1);
+        }, 45); // typing speed
+      } else {
+        timer = setTimeout(() => setIsTyping(false), 1800); // pause before erasing
+      }
+    } else {
+      if (charIndex > 0) {
+        timer = setTimeout(() => {
+          setDisplayText(currentHint.slice(0, charIndex - 1));
+          setCharIndex((c) => c - 1);
+        }, 25); // erase speed (faster)
+      } else {
         setHintIndex((i) => (i + 1) % SEARCH_HINTS.length);
-        setSpinning(false);
-      }, 300);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+        setIsTyping(true);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, [charIndex, isTyping, hintIndex, value]);
 
   return (
     <div className={styles.searchInputWrapper}>
       <Search
-        className={`${styles.searchIcon} ${spinning ? styles.searchSpin : ''}`}
+        className={`${styles.searchIcon} ${isTyping && !value ? styles.searchPulse : ''}`}
         size={20}
         aria-hidden="true"
       />
@@ -45,7 +66,7 @@ function AnimatedSearchInput({ value, onChange, disabled }) {
         type="text"
         value={value}
         onChange={onChange}
-        placeholder={SEARCH_HINTS[hintIndex]}
+        placeholder={value ? '' : displayText + '|'}
         className={styles.input}
         disabled={disabled}
         aria-label="Describe your travel plan"

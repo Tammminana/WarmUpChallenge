@@ -493,12 +493,11 @@
 /* ── ANIMATED SEARCH ── */
 .searchInputWrapper { display: flex; align-items: center; flex: 1; gap: var(--space-3); }
 .searchIcon { color: var(--primary-400); transition: transform var(--transition-base); flex-shrink: 0; }
-.searchSpin { animation: searchBounce 0.3s ease; }
+.searchPulse { animation: searchPulse 1s ease infinite; }
 
-@keyframes searchBounce {
-  0% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-4px) rotate(-10deg); }
-  100% { transform: translateY(0) rotate(0deg); }
+@keyframes searchPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .searchHint { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-3); }

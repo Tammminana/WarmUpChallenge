@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
-import { MapPin, Zap, Globe, ArrowRight, Star, Clock, Wallet, Shield } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { MapPin, Zap, Globe, ArrowRight, Star, Wallet, Shield } from 'lucide-react';
 import styles from './Landing.module.css';
 
-// Core 3 features shown as clickable cards
+// Core 3 features — each routes somewhere meaningful
 const FEATURES = [
   {
     icon: <Zap size={24} aria-hidden="true" />,
@@ -17,7 +18,7 @@ const FEATURES = [
     title: 'Smart Budget Tracker',
     desc: 'Real-time cost estimates for every activity. Track spending and get alerts before you overspend.',
     color: 'orange',
-    link: '/plan',
+    link: '/budget',
     why: "Budget overruns ruin trips. We track every rupee so you don't have to.",
   },
   {
@@ -45,20 +46,44 @@ const SAMPLE_DESTINATIONS = [
   { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80', tag: 'Culture' },
 ];
 
+// Interactive map component — click a location to start planning
+function ExploreMap() {
+  const navigate = useNavigate();
+  const [hovered, setHovered] = useState(null);
+
+  const handleMapClick = useCallback(() => {
+    // Open the Planner with map-based location selection
+    navigate('/plan?mode=map');
+  }, [navigate]);
+
+  return (
+    <div className={styles.mapExplore}>
+      <div className={styles.mapLeft}>
+        <h3 className={styles.mapTitle}>📍 Explore on the Map</h3>
+        <p className={styles.mapDesc}>
+          Click any location on the map to start planning your trip. 
+          We focus on India first, with worldwide destinations available.
+        </p>
+        <button onClick={handleMapClick} className="btn btn-primary">
+          Open Interactive Planner <ArrowRight size={16} aria-hidden="true" />
+        </button>
+      </div>
+      <div className={styles.mapRight}>
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=68.0,6.5,97.5,37.5&layer=mapnik"
+          title="India Map - Click to explore"
+          className={styles.mapFrame}
+          loading="lazy"
+          aria-label="Interactive map of India for trip planning"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function Landing() {
   return (
     <div className={styles.page}>
-
-      {/* ── WHY WE BUILD ── */}
-      <div className={styles.whyBanner} role="banner" aria-label="Mission statement">
-        <div className="container">
-          <Shield size={14} aria-hidden="true" />
-          <span>
-            <strong>Why Wanderly?</strong> Travel planning wastes 8+ hours on scattered blogs and mismatched budgets.
-            We built an AI-first engine so anyone — regardless of language or budget — can plan smart trips in seconds.
-          </span>
-        </div>
-      </div>
 
       {/* ── HERO ── */}
       <section className={styles.hero} aria-labelledby="hero-heading">
@@ -82,23 +107,6 @@ export default function Landing() {
               <a href="#features" className="btn btn-outline btn-lg">
                 See How It Works
               </a>
-            </div>
-
-            <div className={`${styles.heroStats} animate-fade-in-up`}>
-              <div className={styles.stat}>
-                <span className={styles.statNum}>10s</span>
-                <span className={styles.statLabel}>Itinerary in</span>
-              </div>
-              <div className={styles.statDivider} aria-hidden="true" />
-              <div className={styles.stat}>
-                <span className={styles.statNum}>100%</span>
-                <span className={styles.statLabel}>Personalized</span>
-              </div>
-              <div className={styles.statDivider} aria-hidden="true" />
-              <div className={styles.stat}>
-                <span className={styles.statNum}>Free</span>
-                <span className={styles.statLabel}>To use</span>
-              </div>
             </div>
           </div>
 
@@ -153,6 +161,17 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── MAP EXPLORE ── */}
+      <section className={styles.mapSection} aria-labelledby="map-heading">
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <h2 id="map-heading" className="section-title">Explore destinations on the map</h2>
+            <p className="section-subtitle">Pick a spot, plan a trip. It starts with a single click.</p>
+          </div>
+          <ExploreMap />
+        </div>
+      </section>
+
       {/* ── FEATURES ── */}
       <section id="features" className={styles.features} aria-labelledby="features-heading">
         <div className="container">
@@ -175,7 +194,7 @@ export default function Landing() {
               </Link>
             ))}
           </div>
-          {/* Accessibility footnote — concise but present */}
+          {/* Accessibility — concise footnote */}
           <p className={styles.a11yNote} aria-label="Accessibility commitment">
             ♿ Built with full keyboard navigation, ARIA screen-reader support, and high-contrast mode.
           </p>
@@ -224,11 +243,9 @@ export default function Landing() {
           <p className={styles.footerText}>
             Built for <strong>PromptAI War</strong> · Powered by Google Gemini · Deployed on Cloud Run
           </p>
-          <div className={styles.footerLinks}>
-            <span className={`badge badge-teal`}>
-              <Clock size={10} aria-hidden="true" /> Lightweight · Under 10MB
-            </span>
-          </div>
+          <p className={styles.footerA11y}>
+            <Shield size={10} aria-hidden="true" /> Accessible · Secure · Open Source
+          </p>
         </div>
       </footer>
     </div>

@@ -329,18 +329,7 @@
   gap: var(--space-4);
 }
 .footerText { color: var(--text-muted); font-size: 0.875rem; }
-.footerLinks { display: flex; gap: var(--space-4); }
-
-/* ── WHY BANNER ── */
-.whyBanner {
-  background: rgba(99,102,241,0.06);
-  border-bottom: 1px solid rgba(99,102,241,0.12);
-  padding: var(--space-2) 0;
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-}
-.whyBanner .container { display: flex; align-items: center; gap: var(--space-3); }
-.whyBanner svg { flex-shrink: 0; color: var(--primary-400); }
+.footerA11y { display: flex; align-items: center; gap: var(--space-2); font-size: 0.8rem; color: var(--text-muted); }
 
 /* ── A11Y NOTE ── */
 .a11yNote {
@@ -350,17 +339,37 @@
   color: var(--text-muted);
 }
 
+/* ── MAP EXPLORE ── */
+.mapSection { padding: var(--space-12) 0; }
+.mapExplore {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-8);
+  align-items: center;
+  background: var(--gradient-card);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+}
+.mapLeft { display: flex; flex-direction: column; gap: var(--space-4); }
+.mapTitle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
+.mapDesc { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+.mapRight { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--surface-glass-border); }
+.mapFrame { width: 100%; height: 320px; border: none; display: block; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .hero .container { grid-template-columns: 1fr; gap: var(--space-10); }
   .heroVisual { order: -1; }
   .featGrid { grid-template-columns: 1fr; }
   .destGrid, .personaGrid { grid-template-columns: repeat(2, 1fr); }
+  .mapExplore { grid-template-columns: 1fr; }
+  .mapFrame { height: 250px; }
 }
 
 @media (max-width: 600px) {
   .hero { padding: 120px 0 60px; }
   .heroCta { flex-direction: column; }
   .destGrid, .personaGrid { grid-template-columns: 1fr; }
-  .heroStats { flex-wrap: wrap; gap: var(--space-4); }
 }
+

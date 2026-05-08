@@ -5,14 +5,15 @@ import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
 import './App.css';
 
-// Lazy-load heavy Planner page — app shell loads instantly
+// Lazy-load heavy pages — app shell loads instantly
 const Planner = lazy(() => import('./pages/Planner'));
+const Budget = lazy(() => import('./pages/Budget'));
 
 function LoadingFallback() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', flexDirection: 'column', gap: '1rem' }}>
       <div className="spinner" style={{ width: 40, height: 40, borderWidth: 4 }} aria-hidden="true" />
-      <p style={{ color: 'var(--text-secondary)' }}>Loading Planner…</p>
+      <p style={{ color: 'var(--text-secondary)' }}>Loading…</p>
     </div>
   );
 }
@@ -30,6 +31,14 @@ export default function App() {
             element={
               <Suspense fallback={<LoadingFallback />}>
                 <Planner />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/budget"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Budget />
               </Suspense>
             }
           />
