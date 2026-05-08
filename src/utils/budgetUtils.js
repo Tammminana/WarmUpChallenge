@@ -4,29 +4,53 @@
  */
 
 /**
- * Parses a cost string like "₹500", "Free", "~$20", "approx 300 INR"
- * Returns a number (0 if free or unparseable)
+ * Parses a cost string like "₹500", "Free", "~$20", "approx 300 INR", "₹200-400"
+ * Handles ranges by averaging min and max.
+ * Returns a number (0 if free or unparseable).
  */
 export function parseCost(costStr) {
-  if (!costStr || typeof costStr !== 'string') return 0;
-  const lower = costStr.toLowerCase().trim();
-  if (lower === 'free' || lower === 'no cost' || lower === '0') return 0;
-  const match = lower.match(/[\d,]+(\.\d+)?/);
+  if (costStr === null || costStr === undefined) return 0;
+  if (typeof costStr === 'number') return isNaN(costStr) ? 0 : costStr;
+  const str = String(costStr).toLowerCase().trim();
+  if (str === 'free' || str === 'no cost' || str === '0' || str === '') return 0;
+
+  // Remove currency symbols and common prefixes
+  const cleaned = str.replace(/[₹$€£¥،,]/g, '').replace(/approx\.?|~|about|around|upto|up to/gi, '').trim();
+
+  // Handle ranges like "200-400" or "200 to 400"
+  const rangeMatch = cleaned.match(/(\d+\.?\d*)\s*(?:-|to)\s*(\d+\.?\d*)/);
+  if (rangeMatch) {
+    const low = parseFloat(rangeMatch[1]);
+    const high = parseFloat(rangeMatch[2]);
+    if (!isNaN(low) && !isNaN(high)) return (low + high) / 2;
+  }
+
+  // Single number
+  const match = cleaned.match(/(\d[\d.]*k?)/);
   if (!match) return 0;
-  return parseFloat(match[0].replace(/,/g, ''));
+  let num = match[1];
+  if (num.endsWith('k')) return parseFloat(num) * 1000;
+  const result = parseFloat(num);
+  return isNaN(result) ? 0 : result;
 }
 
 /**
- * Calculates total estimated cost across all days and activities
+ * Calculates total estimated cost across all days and activities.
+ * Also attempts to parse from itinerary.totalBudget if activities sum to 0.
  */
 export function calcTotalEstimated(itinerary) {
   if (!itinerary?.days?.length) return 0;
-  return itinerary.days.reduce((dayAcc, day) => {
+  const activitySum = itinerary.days.reduce((dayAcc, day) => {
     if (!Array.isArray(day.activities)) return dayAcc;
     return dayAcc + day.activities.reduce((actAcc, act) => {
       return actAcc + parseCost(act.cost);
     }, 0);
   }, 0);
+  // Fallback: parse from the top-level totalBudget string if activities give 0
+  if (activitySum === 0 && itinerary.totalBudget) {
+    return parseCost(itinerary.totalBudget);
+  }
+  return activitySum;
 }
 
 /**

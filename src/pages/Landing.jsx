@@ -98,7 +98,15 @@ function ExploreMap() {
           Plan Trip to {activeCity.name} <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
-      <div className={styles.mapRight} onClick={handleMapClick} role="button" tabIndex={0} aria-label={`Click to plan trip to ${activeCity.name}`} style={{ cursor: 'pointer' }}>
+      <div className={styles.mapRight}>
+        <div
+          className={styles.mapOverlay}
+          onClick={handleMapClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && handleMapClick()}
+          aria-label={`Click to plan trip to ${activeCity.name}`}
+        />
         <iframe
           src={mapSrc}
           title={`${activeCity.name} Map`}

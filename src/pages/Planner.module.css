@@ -125,6 +125,11 @@
   border-color: rgba(139,92,246,0.5);
   color: var(--primary-300);
 }
+.hotelActive {
+  background: rgba(20,184,166,0.2);
+  border-color: rgba(20,184,166,0.5);
+  color: var(--teal-400, #14b8a6);
+}
 
 /* Search bar */
 .inputWrapper {
@@ -425,6 +430,33 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
 }
+
+/* Hotel Card */
+.hotelCard {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: rgba(20,184,166,0.08);
+  border: 1px solid rgba(20,184,166,0.3);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-top: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+.hotelCard svg { color: var(--teal-400, #14b8a6); flex-shrink: 0; margin-top: 2px; }
+.hotelArea { color: var(--text-secondary); }
+.hotelCost { color: var(--teal-400, #14b8a6); font-weight: 700; }
+.hotelWhy { margin-top: 4px; font-size: 0.82rem; color: var(--text-muted); }
+.hotelMapLink {
+  margin-left: auto;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.hotelMapLink:hover { color: var(--teal-400, #14b8a6); }
 
 .activitiesList {
   display: flex;

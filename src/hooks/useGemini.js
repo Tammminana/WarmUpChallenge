@@ -19,6 +19,12 @@ Always return exactly this JSON structure:
     {
       "day": 1,
       "theme": "Day theme",
+      "hotel": {
+        "name": "Hotel or Guesthouse name (or null if not requested)",
+        "area": "Neighborhood/area",
+        "costPerNight": "cost or null",
+        "whyHere": "Why this hotel suits this day's location"
+      },
       "activities": [
         {
           "time": "09:00 AM",

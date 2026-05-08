@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
-  Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
+  Send, Loader2, MapPin, Calendar, Wallet,
   Accessibility, Info, CheckCircle2, Plus, Clock, Cloud,
-  ExternalLink, ChevronDown, Search, Save, Users, Moon, Sun
+  ExternalLink, Search, Save, Users, Moon, Sun, Hotel
 } from 'lucide-react';
 import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
+import { parseCost } from '../utils/budgetUtils';
 import styles from './Planner.module.css';
 
 // Typewriter placeholder texts for extra context field
@@ -175,7 +176,6 @@ export default function Planner() {
     isRainMode, setIsRainMode, saveTrip
   } = useTrip();
 
-  // Structured inputs (above search bar)
   const [destination, setDestination] = useState('');
   const [numDays, setNumDays] = useState('3');
   const [budget, setBudget] = useState('');
@@ -183,6 +183,7 @@ export default function Planner() {
   const [members, setMembers] = useState('1');
   const [vibe, setVibe] = useState('');
   const [isNightPerson, setIsNightPerson] = useState(false);
+  const [includeHotels, setIncludeHotels] = useState(false);
 
   // Free text for extra preferences
   const [extraPrefs, setExtraPrefs] = useState('');
@@ -201,18 +202,18 @@ export default function Planner() {
     if (persona) setVibe(persona);
   }, [searchParams]);
 
-  // Build the AI prompt from structured inputs
   const buildPrompt = useCallback(() => {
     const currSymbol = currency.split(' ')[0];
     let prompt = `Plan a ${numDays}-day trip to ${destination}`;
     if (budget) prompt += ` with a budget of ${currSymbol}${budget}`;
     if (parseInt(members) > 1) prompt += ` for ${members} people`;
     if (vibe) prompt += `, traveling as a ${vibe}`;
+    if (includeHotels) prompt += `. For each day, include a hotel stay recommendation (name, area, approx cost per night, why it suits the area)`;
     if (isNightPerson) prompt += `. I'm a night person — prefer late dinners, nightlife, and late morning starts`;
     if (extraPrefs.trim()) prompt += `. ${extraPrefs.trim()}`;
     prompt += '.';
     return prompt;
-  }, [destination, numDays, budget, currency, members, vibe, isNightPerson, extraPrefs]);
+  }, [destination, numDays, budget, currency, members, vibe, isNightPerson, includeHotels, extraPrefs]);
 
   const isFormReady = destination.trim().length >= 2;
 
@@ -264,15 +265,6 @@ export default function Planner() {
   return (
     <div className={styles.container}>
       <div className={`container ${styles.inner}`}>
-
-        {/* ── WHY WE'RE BUILDING THIS ── */}
-        <aside className={styles.missionBanner} aria-label="Mission context">
-          <Sparkles size={14} aria-hidden="true" />
-          <span>
-            <strong>Why Wanderly?</strong> Travel planning is broken — 8+ hours of research, mismatched
-            budgets, and zero personalization. We&apos;re fixing that with AI that thinks the way you travel.
-          </span>
-        </aside>
 
         {/* ── INPUT SECTION ── */}
         <section
@@ -368,6 +360,21 @@ export default function Planner() {
                   aria-label={isNightPerson ? 'Night owl mode active' : 'Early bird mode'}
                 >
                   {isNightPerson ? '🌙 Night Owl' : '☀️ Early Bird'}
+                </button>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel}>
+                  <Hotel size={14} /> Hotels
+                </label>
+                <button
+                  type="button"
+                  className={`${styles.toggleBtn} ${includeHotels ? styles.hotelActive : ''}`}
+                  onClick={() => setIncludeHotels(!includeHotels)}
+                  disabled={loading}
+                  aria-label={includeHotels ? 'Hotel suggestions on' : 'Add hotel suggestions'}
+                >
+                  {includeHotels ? '🏨 Hotels On' : '🏨 Add Hotels'}
                 </button>
               </div>
             </div>
@@ -472,12 +479,12 @@ export default function Planner() {
                 </div>
               </div>
 
-              {/* Budget Tracker */}
+              {/* Budget Tracker — shows expenses from Budget page + AI estimate */}
               <div className={`glass ${styles.budgetWidget}`} aria-label="Budget tracker">
                 <div className={styles.budgetTop}>
                   <span className={styles.budgetLabel}>💰 Budget Tracker</span>
                   <span className={`${styles.budgetStatus} ${isOverBudget ? styles.over : ''}`}>
-                    {Math.round(percentUsed)}%
+                    {totalEstimated > 0 ? `${Math.round(percentUsed)}%` : '—'}
                   </span>
                 </div>
                 <div className={styles.progressBar} role="progressbar" aria-valuenow={Math.round(percentUsed)} aria-valuemin={0} aria-valuemax={100}>
@@ -487,8 +494,8 @@ export default function Planner() {
                   />
                 </div>
                 <div className={styles.budgetMeta}>
-                  <span>Marked spent: {currency.split(' ')[0]}{totalSpent}</span>
-                  <span>Est. total: {currency.split(' ')[0]}{Math.round(totalEstimated)}</span>
+                  <span>Logged spent: {currency.split(' ')[0]}{totalSpent.toLocaleString()}</span>
+                  <span>Est. total: {totalEstimated > 0 ? `${currency.split(' ')[0]}${Math.round(totalEstimated).toLocaleString()}` : 'n/a'}</span>
                 </div>
                 {isOverBudget && (
                   <p className={styles.budgetAlert} role="alert">⚠️ You've exceeded the estimated budget!</p>
@@ -594,6 +601,32 @@ export default function Planner() {
                       <p className={styles.dailyBudget}>
                         <Wallet size={14} aria-hidden="true" /> Estimated daily spend: <strong>{currentDay.dailyBudget}</strong>
                       </p>
+
+                      {/* Hotel recommendation */}
+                      {currentDay.hotel?.name && currentDay.hotel.name !== 'null' && (
+                        <div className={styles.hotelCard} aria-label="Hotel recommendation">
+                          <Hotel size={16} aria-hidden="true" />
+                          <div>
+                            <strong>{currentDay.hotel.name}</strong>
+                            <span className={styles.hotelArea}> · {currentDay.hotel.area}</span>
+                            {currentDay.hotel.costPerNight && (
+                              <span className={styles.hotelCost}> · {currentDay.hotel.costPerNight}/night</span>
+                            )}
+                            {currentDay.hotel.whyHere && (
+                              <p className={styles.hotelWhy}>{currentDay.hotel.whyHere}</p>
+                            )}
+                          </div>
+                          <a
+                            href={`https://www.google.com/maps/search/${encodeURIComponent(currentDay.hotel.name + ' ' + itinerary.destination)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.hotelMapLink}
+                            aria-label={`Find ${currentDay.hotel.name} on Google Maps`}
+                          >
+                            <ExternalLink size={12} />
+                          </a>
+                        </div>
+                      )}
                     </div>
 
                     {/* Activities */}
@@ -628,7 +661,7 @@ export default function Planner() {
                           </div>
                           <button
                             className={styles.markBtn}
-                            onClick={() => markSpent(`${activeDay}-${i}`, act._parsedCost ?? 0)}
+                            onClick={() => markSpent(`${activeDay}-${i}`, parseCost(act.cost))}
                             title="Mark this activity's cost as spent"
                             aria-label={`Mark ${act.name} cost as spent`}
                           >

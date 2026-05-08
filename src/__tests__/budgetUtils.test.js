@@ -10,6 +10,8 @@ describe('parseCost', () => {
     expect(parseCost('Free')).toBe(0);
     expect(parseCost('free')).toBe(0);
     expect(parseCost('No Cost')).toBe(0);
+    expect(parseCost('0')).toBe(0);
+    expect(parseCost('')).toBe(0);
   });
 
   it('parses Indian Rupee strings', () => {
@@ -18,15 +20,35 @@ describe('parseCost', () => {
     expect(parseCost('~₹350')).toBe(350);
   });
 
+  it('parses range strings by averaging', () => {
+    expect(parseCost('₹200-400')).toBe(300);
+    expect(parseCost('200 to 400')).toBe(300);
+    expect(parseCost('$10-20')).toBe(15);
+    expect(parseCost('₹1000-2000')).toBe(1500);
+  });
+
+  it('parses k-suffix shorthand', () => {
+    expect(parseCost('5k')).toBe(5000);
+    expect(parseCost('2.5k')).toBe(2500);
+  });
+
   it('parses numeric-only strings', () => {
     expect(parseCost('200')).toBe(200);
     expect(parseCost('1000')).toBe(1000);
   });
 
+  it('accepts a raw number', () => {
+    expect(parseCost(500)).toBe(500);
+    expect(parseCost(0)).toBe(0);
+  });
+
   it('handles null and undefined gracefully', () => {
     expect(parseCost(null)).toBe(0);
     expect(parseCost(undefined)).toBe(0);
-    expect(parseCost('')).toBe(0);
+  });
+
+  it('returns 0 for NaN number input', () => {
+    expect(parseCost(NaN)).toBe(0);
   });
 
   it('handles unparseable strings', () => {
@@ -45,6 +67,21 @@ describe('calcTotalEstimated', () => {
 
   it('sums all activity costs across all days', () => {
     expect(calcTotalEstimated(mockItinerary)).toBe(1100);
+  });
+
+  it('handles range costs correctly in total', () => {
+    const rangeItinerary = {
+      days: [{ activities: [{ cost: '₹200-400' }, { cost: '₹100' }] }]
+    };
+    expect(calcTotalEstimated(rangeItinerary)).toBe(400); // 300 (avg) + 100
+  });
+
+  it('falls back to totalBudget when activities sum to 0', () => {
+    const noActivityCosts = {
+      totalBudget: '₹15,000',
+      days: [{ activities: [{ cost: 'Free' }, { cost: 'Varies' }] }]
+    };
+    expect(calcTotalEstimated(noActivityCosts)).toBe(15000);
   });
 
   it('returns 0 for null itinerary', () => {
