@@ -136,12 +136,28 @@ function MapEmbed({ destination }) {
 }
 
 // Generates a Google Calendar link for a day's activities
-function makeCalendarUrl(destination, day, activities) {
+function makeCalendarUrl(destination, day, activities, tripStartDate = null) {
   const title = encodeURIComponent(`Day ${day.day}: ${day.theme} — ${destination}`);
   const details = encodeURIComponent(
     activities.map(a => `${a.time} ${a.name}: ${a.description}`).join('\n')
   );
-  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`;
+
+  // Build proper date params if we have a trip start date
+  let dateParams = '';
+  if (tripStartDate) {
+    const startDate = new Date(tripStartDate);
+    startDate.setDate(startDate.getDate() + (day.day - 1));
+    // Format: YYYYMMDDTHHMMSS/YYYYMMDDTHHMMSS
+    const formatDate = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const dayStart = new Date(startDate);
+    dayStart.setHours(8, 0, 0);
+    const dayEnd = new Date(startDate);
+    dayEnd.setHours(22, 0, 0);
+    dateParams = `&dates=${formatDate(dayStart)}/${formatDate(dayEnd)}`;
+  }
+
+  const location = encodeURIComponent(destination);
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}${dateParams}`;
 }
 
 export default function Planner() {
@@ -434,7 +450,7 @@ export default function Planner() {
 
                           {/* Google Calendar */}
                           <a
-                            href={makeCalendarUrl(itinerary.destination, currentDay, currentDay.activities)}
+                            href={makeCalendarUrl(itinerary.destination, currentDay, currentDay.activities, tripDate || itinerary.scheduledDate)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn btn-outline btn-sm"
