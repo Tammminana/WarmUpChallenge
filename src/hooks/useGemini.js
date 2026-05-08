@@ -105,7 +105,7 @@ export function useGemini() {
     if (!apiKey || apiKey === 'your_gemini_api_key_here') return null;
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
       const result = await model.generateContent(
         `Give ONE short practical tip (max 15 words) for visiting "${sanitizePrompt(activityName)}" in ${sanitizePrompt(destination)}. Only the tip, no intro.`
       );

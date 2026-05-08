@@ -18,7 +18,7 @@ const FEATURES = [
     desc: 'Real-time cost estimates for every activity. Track spending and get alerts before you overspend.',
     color: 'orange',
     link: '/plan',
-    why: 'Budget overruns ruin trips. We track every rupee so you don't have to.',
+    why: "Budget overruns ruin trips. We track every rupee so you don't have to.",
   },
   {
     icon: <Globe size={24} aria-hidden="true" />,
@@ -26,7 +26,7 @@ const FEATURES = [
     desc: 'Plan your trip in Hindi, Telugu, Tamil, or any language. Google Translation handles the rest.',
     color: 'teal',
     link: '/plan',
-    why: 'Travel planning shouldn't require English fluency.',
+    why: "Travel planning shouldn't require English fluency.",
   },
 ];
 
