@@ -474,3 +474,69 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── MISSION BANNER ── */
+.missionBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.missionBanner svg { flex-shrink: 0; color: var(--primary-400); margin-top: 2px; }
+
+/* ── ANIMATED SEARCH ── */
+.searchInputWrapper { display: flex; align-items: center; flex: 1; gap: var(--space-3); }
+.searchIcon { color: var(--primary-400); transition: transform var(--transition-base); flex-shrink: 0; }
+.searchSpin { animation: searchBounce 0.3s ease; }
+
+@keyframes searchBounce {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(-10deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+.searchHint { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-3); }
+.spinnerIcon { animation: rotateSpin 0.8s linear infinite; }
+@keyframes rotateSpin { to { transform: rotate(360deg); } }
+
+/* ── LOADING ── */
+.loadingSpinner { flex-direction: row !important; align-items: center; gap: var(--space-6) !important; }
+.loadingTitle { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-1); }
+.loadingSubtitle { font-size: 0.85rem; color: var(--text-muted); }
+
+/* ── HIGHLIGHTS ── */
+.highlights { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+
+/* ── BUDGET ALERT ── */
+.budgetAlert { font-size: 0.8rem; color: var(--rose-400); margin-top: var(--space-2); font-weight: 600; }
+
+/* ── DAY HEADER ACTIONS ── */
+.dayHeaderTop { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4); flex-wrap: wrap; gap: var(--space-3); }
+.dayHeaderTop h3 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-bottom: 0; }
+.dayActions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.rainActive { border-color: var(--primary-400) !important; color: var(--primary-300) !important; background: rgba(99,102,241,0.1) !important; }
+.dailyBudget { display: flex; align-items: center; gap: var(--space-2); font-size: 0.875rem; color: var(--text-secondary); margin-top: var(--space-4); }
+
+/* ── MAP ── */
+.mapContainer { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--surface-glass-border); }
+.mapHeader { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); border-bottom: 1px solid var(--surface-glass-border); background: rgba(99,102,241,0.05); }
+.mapLink { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--primary-400); }
+.mapIframe { width: 100%; height: 200px; border: none; display: block; }
+.mapLoading { display: flex; align-items: center; justify-content: center; gap: var(--space-3); height: 160px; font-size: 0.85rem; color: var(--text-muted); }
+.mapFallback { padding: var(--space-4); font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+
+/* ── BREAKDOWN ── */
+.breakdown { background: var(--gradient-card); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-lg); padding: var(--space-6); }
+.breakdownTitle { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: var(--space-5); }
+.breakdownGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-3); }
+.breakdownItem { background: var(--surface-glass); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: var(--space-1); }
+.breakdownKey { font-size: 0.7rem; text-transform: capitalize; color: var(--text-muted); font-weight: 600; }
+.breakdownVal { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--primary-300); }
+.breakdownNote { margin-top: var(--space-4); font-size: 0.85rem; color: var(--text-secondary); }
+

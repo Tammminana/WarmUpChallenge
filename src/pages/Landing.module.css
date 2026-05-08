@@ -234,7 +234,7 @@
 
 .featGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-6);
 }
 
@@ -257,7 +257,9 @@
   font-size: 1.2rem;
   font-weight: 700;
 }
+.featCard { display: flex; flex-direction: column; gap: var(--space-4); text-decoration: none; color: inherit; cursor: pointer; }
 .featDesc { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+.featWhy { font-size: 0.8rem; color: var(--primary-400); font-style: italic; margin-top: auto; }
 
 /* ── PERSONAS ── */
 .personas {
@@ -328,6 +330,25 @@
 }
 .footerText { color: var(--text-muted); font-size: 0.875rem; }
 .footerLinks { display: flex; gap: var(--space-4); }
+
+/* ── WHY BANNER ── */
+.whyBanner {
+  background: rgba(99,102,241,0.06);
+  border-bottom: 1px solid rgba(99,102,241,0.12);
+  padding: var(--space-2) 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.whyBanner .container { display: flex; align-items: center; gap: var(--space-3); }
+.whyBanner svg { flex-shrink: 0; color: var(--primary-400); }
+
+/* ── A11Y NOTE ── */
+.a11yNote {
+  text-align: center;
+  margin-top: var(--space-6);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {

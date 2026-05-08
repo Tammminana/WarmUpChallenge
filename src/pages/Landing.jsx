@@ -1,31 +1,32 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Zap, Shield, Globe, ArrowRight, Star, Clock, Wallet } from 'lucide-react';
+import { MapPin, Zap, Globe, ArrowRight, Star, Clock, Wallet, Shield } from 'lucide-react';
 import styles from './Landing.module.css';
 
+// Core 3 features shown as clickable cards
 const FEATURES = [
   {
     icon: <Zap size={24} aria-hidden="true" />,
     title: 'AI-Powered Itineraries',
-    desc: 'Gemini generates a full day-by-day plan in seconds — tailored to your budget, style, and pace.',
+    desc: 'Gemini AI crafts a full day-by-day plan in seconds — logical timing, local tips, and budget-aware stops.',
     color: 'purple',
+    link: '/plan',
+    why: 'We eliminate 8 hours of research with one AI prompt.',
   },
   {
     icon: <Wallet size={24} aria-hidden="true" />,
     title: 'Smart Budget Tracker',
-    desc: 'Real-time cost estimates for every activity. Get alerts before you overspend.',
+    desc: 'Real-time cost estimates for every activity. Track spending and get alerts before you overspend.',
     color: 'orange',
+    link: '/plan',
+    why: 'Budget overruns ruin trips. We track every rupee so you don't have to.',
   },
   {
     icon: <Globe size={24} aria-hidden="true" />,
     title: 'Multilingual Ready',
-    desc: 'Plan your trip in any language. Wanderly understands your travel prompts globally.',
+    desc: 'Plan your trip in Hindi, Telugu, Tamil, or any language. Google Translation handles the rest.',
     color: 'teal',
-  },
-  {
-    icon: <Shield size={24} aria-hidden="true" />,
-    title: 'Accessible for All',
-    desc: 'Built with screen readers, keyboard navigation, and high-contrast support from day one.',
-    color: 'rose',
+    link: '/plan',
+    why: 'Travel planning shouldn't require English fluency.',
   },
 ];
 
@@ -41,12 +42,23 @@ const PERSONAS = [
 const SAMPLE_DESTINATIONS = [
   { name: 'Varanasi', country: 'India', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80', tag: 'Spiritual' },
   { name: 'Goa', country: 'India', img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80', tag: 'Beach' },
-  { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1477587458883-47145ed31459?w=600&q=80', tag: 'Culture' },
+  { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80', tag: 'Culture' },
 ];
 
 export default function Landing() {
   return (
     <div className={styles.page}>
+
+      {/* ── WHY WE BUILD ── */}
+      <div className={styles.whyBanner} role="banner" aria-label="Mission statement">
+        <div className="container">
+          <Shield size={14} aria-hidden="true" />
+          <span>
+            <strong>Why Wanderly?</strong> Travel planning wastes 8+ hours on scattered blogs and mismatched budgets.
+            We built an AI-first engine so anyone — regardless of language or budget — can plan smart trips in seconds.
+          </span>
+        </div>
+      </div>
 
       {/* ── HERO ── */}
       <section className={styles.hero} aria-labelledby="hero-heading">
@@ -150,13 +162,23 @@ export default function Landing() {
           </div>
           <div className={`${styles.featGrid} stagger`}>
             {FEATURES.map((f) => (
-              <div key={f.title} className={`card ${styles.featCard} ${styles[`color-${f.color}`]}`}>
+              <Link
+                key={f.title}
+                to={f.link}
+                className={`card ${styles.featCard} ${styles[`color-${f.color}`]}`}
+                aria-label={`${f.title} — ${f.why}`}
+              >
                 <div className={`${styles.featIcon} ${styles[`icon-${f.color}`]}`}>{f.icon}</div>
                 <h3 className={styles.featTitle}>{f.title}</h3>
                 <p className={styles.featDesc}>{f.desc}</p>
-              </div>
+                <p className={styles.featWhy}>💡 {f.why}</p>
+              </Link>
             ))}
           </div>
+          {/* Accessibility footnote — concise but present */}
+          <p className={styles.a11yNote} aria-label="Accessibility commitment">
+            ♿ Built with full keyboard navigation, ARIA screen-reader support, and high-contrast mode.
+          </p>
         </div>
       </section>
 
