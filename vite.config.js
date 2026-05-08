@@ -9,4 +9,7 @@ export default defineConfig({
     setupFiles: [],
     include: ['src/__tests__/**/*.test.{js,jsx}'],
   },
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
 })

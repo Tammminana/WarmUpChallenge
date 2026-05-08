@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
@@ -9,9 +9,10 @@ import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
 import { parseCost } from '../utils/budgetUtils';
 import WeatherWidget from '../components/WeatherWidget';
-import MapEmbed from '../components/MapEmbed';
 import AnimatedSearchInput from '../components/AnimatedSearchInput';
 import styles from './Planner.module.css';
+
+const MapEmbed = lazy(() => import('../components/MapEmbed'));
 
 // AnimatedSearchInput extracted to src/components/AnimatedSearchInput.jsx
 
@@ -432,7 +433,9 @@ export default function Planner() {
                 </nav>
 
                 {/* Map */}
-                <MapEmbed destination={itinerary.destination} />
+                <Suspense fallback={<div className={styles.mapLoading}><div className="spinner" /><span>Loading map module...</span></div>}>
+                  <MapEmbed destination={itinerary.destination} />
+                </Suspense>
 
                 {/* Packing */}
                 {itinerary.packingTips?.length > 0 && (
