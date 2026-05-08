@@ -73,11 +73,12 @@ export function parseGeminiResponse(rawText) {
     throw new Error('Empty response from AI');
   }
   // Strip code fences if present
-  const cleaned = rawText
+  let cleaned = rawText
     .trim()
     .replace(/^```json\s*/i, '')
     .replace(/^```\s*/i, '')
-    .replace(/\s*```$/i, '');
+    .replace(/\s*```$/i, '')
+    .trim();
 
   try {
     const parsed = JSON.parse(cleaned);
@@ -87,6 +88,26 @@ export function parseGeminiResponse(rawText) {
     }
     return parsed;
   } catch (e) {
+    // Attempt aggressive recovery for cut-off JSON (due to max tokens)
+    try {
+      cleaned = cleaned.replace(/,\s*$/, '');
+      const fixes = [
+        cleaned + '}',
+        cleaned + ']}',
+        cleaned + '}]}',
+        cleaned + ']}]}',
+        cleaned + '"]}]}', // Fix unterminated string
+        cleaned + '"}',
+        cleaned + '"]}',
+      ];
+      for (const fix of fixes) {
+        try {
+          const parsed = JSON.parse(fix);
+          if (parsed.destination && Array.isArray(parsed.days)) return parsed;
+        } catch {}
+      }
+    } catch {}
+    
     throw new Error(`AI response parsing failed: ${e.message}`);
   }
 }

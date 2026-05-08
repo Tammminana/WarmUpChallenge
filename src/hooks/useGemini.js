@@ -126,8 +126,8 @@ async function callWithFallback(apiKey, systemInstruction, prompt, genConfig) {
     } catch (err) {
       lastError = err;
       console.warn(`Model ${modelName} failed:`, err.message);
-      // If it's a quota error, try next model
-      if (err?.message?.includes('429') || err?.message?.includes('quota')) {
+      // If it's a quota error or 503 high demand, try next model
+      if (err?.message?.includes('429') || err?.message?.includes('quota') || err?.message?.includes('503') || err?.message?.includes('high demand')) {
         continue;
       }
       // For non-quota errors (404, etc.), also try next model
@@ -168,7 +168,7 @@ export function useGemini() {
       const apiKey = getApiKey();
       const result = await callWithFallback(apiKey, SYSTEM_PROMPT, safePrompt, {
         temperature: 0.7,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 8192,
       });
       const text = result.response.text();
       const parsed = parseGeminiResponse(text);
