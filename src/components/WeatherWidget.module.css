@@ -1,0 +1,144 @@
+/* WeatherWidget.module.css */
+
+.widget {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-full, 9999px);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s);
+  user-select: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.widget:hover,
+.widget:focus-within {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.5);
+  outline: none;
+}
+
+.widget:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-400, #818cf8);
+}
+
+.compact {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
+
+.emoji {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.temp {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.condition {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--primary-400);
+}
+
+.loadingText {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── TOOLTIP ── */
+.tooltip {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  min-width: 270px;
+  background: var(--surface-card, #1e1e2e);
+  border: 1px solid var(--surface-glass-border, rgba(255,255,255,0.1));
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: tooltipFadeIn 0.15s ease;
+}
+
+/* Prevent tooltip from clipping off screen edges */
+@media (max-width: 600px) {
+  .tooltip {
+    left: 0;
+    transform: none;
+    min-width: 240px;
+  }
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.tooltipHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--surface-glass-border, rgba(255,255,255,0.08));
+}
+
+.tooltipEmoji { font-size: 2rem; line-height: 1; }
+.tooltipCity { display: block; font-weight: 700; font-size: 1rem; color: var(--text-primary); }
+.tooltipDate { font-size: 0.75rem; color: var(--text-muted); }
+
+.tooltipGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 8px;
+  margin-bottom: 10px;
+}
+
+.fullWidth { grid-column: 1 / -1; }
+
+.tooltipItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tooltipLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tooltipVal {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tooltipSource {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin: 0;
+  opacity: 0.6;
+}

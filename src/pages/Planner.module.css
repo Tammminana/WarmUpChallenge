@@ -177,6 +177,19 @@
   font-size: 0.8rem;
 }
 
+/* Weather preview row */
+.weatherRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-2) 0;
+}
+.weatherNote {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
 @media (max-width: 768px) {
   .structuredInputs { grid-template-columns: 1fr 1fr; }
 }

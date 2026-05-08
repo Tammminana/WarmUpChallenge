@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
-  Send, Loader2, MapPin, Calendar, Wallet,
+  Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
   Accessibility, Info, CheckCircle2, Plus, Clock, Cloud,
   ExternalLink, Search, Save, Users, Moon, Sun, Hotel
 } from 'lucide-react';
 import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
 import { parseCost } from '../utils/budgetUtils';
+import WeatherWidget from '../components/WeatherWidget';
 import styles from './Planner.module.css';
 
 // Typewriter placeholder texts for extra context field
@@ -379,6 +380,21 @@ export default function Planner() {
               </div>
             </div>
 
+            {/* Weather preview for destination + first day */}
+            {destination.trim().length >= 2 && (
+              <div className={styles.weatherRow}>
+                <WeatherWidget
+                  destination={destination}
+                  date={tripDate || null}
+                />
+                {tripDate && (
+                  <span className={styles.weatherNote}>
+                    Weather for {new Date(tripDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Extra preferences — animated search */}
             <div className={styles.inputWrapper}>
               <AnimatedSearchInput
@@ -445,6 +461,11 @@ export default function Planner() {
                   <span><Calendar size={14} aria-hidden="true" /> {itinerary.duration}</span>
                   <span><Wallet size={14} aria-hidden="true" /> {itinerary.totalBudget}</span>
                   {parseInt(members) > 1 && <span><Users size={14} aria-hidden="true" /> {members} travelers</span>}
+                  <WeatherWidget
+                    destination={itinerary.destination}
+                    date={tripDate || itinerary.scheduledDate}
+                    compact
+                  />
                 </div>
                 {itinerary.highlights && (
                   <div className={styles.highlights}>

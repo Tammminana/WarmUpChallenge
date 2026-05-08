@@ -40,9 +40,6 @@ export default function Navbar() {
           <Link to="/itinerary" className={`${styles.navLink} ${isActive('/itinerary') ? styles.active : ''}`}>Itineraries</Link>
           <Link to="/plan" className={`${styles.navLink} ${isActive('/plan') ? styles.active : ''}`}>Plan Trip</Link>
           <Link to="/budget" className={`${styles.navLink} ${isActive('/budget') ? styles.active : ''}`}>Budget</Link>
-          <Link to="/plan" className="btn btn-primary btn-sm">
-            <MapPin size={14} aria-hidden="true" /> Start Planning
-          </Link>
         </nav>
 
         <button
