@@ -76,7 +76,7 @@ const SAMPLE_DESTINATIONS = [
   { name: 'Varanasi', country: 'India', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80', tag: 'Spiritual' },
   { name: 'Goa', country: 'India', img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80', tag: 'Beach' },
   { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80', tag: 'Culture' },
-  { name: 'Altyn-Emel', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=600&q=80', tag: 'Nature' },
+  { name: 'Kolsai Lakes', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1590766940554-b0e6d3231bca?w=600&q=80', tag: 'Nature' },
 ];
 
 const EXPLORE_CITIES = [
