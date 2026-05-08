@@ -2,7 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
-  Plus, ExternalLink, Save, Users, Moon, Sun, Hotel, Search, CheckCircle2
+  Plus, ExternalLink, Save, Users, Moon, Sun, Hotel, Search, CheckCircle2,
+  Accessibility, Clock, Cloud, Info
 } from 'lucide-react';
 import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
