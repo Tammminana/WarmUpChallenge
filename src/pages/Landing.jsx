@@ -41,27 +41,31 @@ const PERSONAS = [
   { emoji: '🎉', label: 'Nightlife Lover', desc: 'Bars, clubs & late-night eats' },
 ];
 
-// Kazakhstan hero photos — stunning landscapes
+// Kazakhstan hero photos — 4 stunning, distinct locations
 const KAZAKHSTAN_PHOTOS = [
   {
     url: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=900&q=85',
-    caption: 'Charyn Canyon, Kazakhstan',
-    alt: 'Charyn Canyon red rock formations in Kazakhstan',
+    caption: 'Charyn Canyon, East Kazakhstan',
+    alt: 'Red rock canyon formations at Charyn Canyon, Kazakhstan',
+    dest: 'Charyn Canyon, Kazakhstan',
   },
   {
     url: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=900&q=85',
-    caption: 'Big Almaty Lake, Kazakhstan',
-    alt: 'Turquoise alpine Big Almaty Lake surrounded by mountains',
+    caption: 'Big Almaty Lake, Almaty Region',
+    alt: 'Turquoise Big Almaty Lake surrounded by Tian Shan mountains',
+    dest: 'Almaty, Kazakhstan',
   },
   {
-    url: 'https://images.unsplash.com/photo-1590766940554-b0e6d3231bca?w=900&q=85',
-    caption: 'Kolsai Lakes, Kazakhstan',
-    alt: 'Emerald Kolsai Lakes nestled in Tian Shan mountains',
+    url: 'https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=900&q=85',
+    caption: 'Altyn-Emel National Park',
+    alt: 'Vast steppe and sand dunes at Altyn-Emel National Park, Kazakhstan',
+    dest: 'Altyn-Emel, Kazakhstan',
   },
   {
     url: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=900&q=85',
-    caption: 'Tian Shan Mountains, Kazakhstan',
+    caption: 'Tian Shan Mountains, South Kazakhstan',
     alt: 'Snow-capped Tian Shan mountain peaks in Kazakhstan',
+    dest: 'Shymkent, Kazakhstan',
   },
 ];
 
@@ -72,7 +76,7 @@ const SAMPLE_DESTINATIONS = [
   { name: 'Varanasi', country: 'India', img: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600&q=80', tag: 'Spiritual' },
   { name: 'Goa', country: 'India', img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80', tag: 'Beach' },
   { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80', tag: 'Culture' },
-  { name: 'Kolsai Lakes', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1590766940554-b0e6d3231bca?w=600&q=80', tag: 'Nature' },
+  { name: 'Altyn-Emel', country: 'Kazakhstan', img: 'https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=600&q=80', tag: 'Nature' },
 ];
 
 const EXPLORE_CITIES = [
@@ -151,19 +155,20 @@ function KazakhstanCarousel() {
         ))}
       </div>
 
-      {/* Plan this destination CTA */}
+      {/* Plan this destination CTA — navigates to the photo's specific destination */}
       <button
         className={styles.carouselPlan}
-        onClick={() => navigate(`/plan?dest=${encodeURIComponent('Kazakhstan')}`)}
-        aria-label="Plan a trip to Kazakhstan"
+        onClick={() => navigate(`/plan?dest=${encodeURIComponent(photo.dest || 'Kazakhstan')}`)}
+        aria-label={`Plan a trip to ${photo.caption}`}
       >
-        Plan Kazakhstan Trip <ArrowRight size={14} aria-hidden="true" />
+        Plan {photo.dest?.split(',')[0]} Trip <ArrowRight size={14} aria-hidden="true" />
       </button>
     </div>
   );
 }
 
-// ── Interactive Map ──
+// ── Interactive Map — city buttons on left, iframe on right (no overlay)
+// The overlay was blocking city button clicks; navigation handled by left-panel button only
 function ExploreMap() {
   const navigate = useNavigate();
   const [activeCity, setActiveCity] = useState(EXPLORE_CITIES[0]);
@@ -182,7 +187,7 @@ function ExploreMap() {
       <div className={styles.mapLeft}>
         <h3 className={styles.mapTitle}>📍 Explore on the Map</h3>
         <p className={styles.mapDesc}>
-          Select a city to see its local time and map. Click to start planning a trip there.
+          Select a city to see its local time and map. Click the button to start planning.
         </p>
 
         <div className={styles.cityButtons}>
@@ -206,15 +211,9 @@ function ExploreMap() {
           Plan Trip to {activeCity.name} <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
+
+      {/* Map iframe — no overlay so user can scroll/interact with it freely */}
       <div className={styles.mapRight}>
-        <div
-          className={styles.mapOverlay}
-          onClick={handleMapClick}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && handleMapClick()}
-          aria-label={`Click to plan trip to ${activeCity.name}`}
-        />
         <iframe
           src={mapSrc}
           title={`${activeCity.name} Map`}

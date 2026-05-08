@@ -358,34 +358,37 @@ export default function Planner() {
                 </select>
               </div>
 
-              <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>
-                  {isNightPerson ? <Moon size={14} /> : <Sun size={14} />} Schedule
-                </label>
-                <button
-                  type="button"
-                  className={`${styles.toggleBtn} ${isNightPerson ? styles.nightActive : ''}`}
-                  onClick={() => setIsNightPerson(!isNightPerson)}
-                  disabled={loading}
-                  aria-label={isNightPerson ? 'Night owl mode active' : 'Early bird mode'}
-                >
-                  {isNightPerson ? '🌙 Night Owl' : '☀️ Early Bird'}
-                </button>
-              </div>
+              {/* Schedule + Hotels — side-by-side half-width toggles */}
+              <div className={styles.toggleRow}>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}>
+                    {isNightPerson ? <Moon size={14} /> : <Sun size={14} />} Schedule
+                  </label>
+                  <button
+                    type="button"
+                    className={`${styles.toggleBtn} ${isNightPerson ? styles.nightActive : ''}`}
+                    onClick={() => setIsNightPerson(!isNightPerson)}
+                    disabled={loading}
+                    aria-label={isNightPerson ? 'Night owl mode active' : 'Early bird mode'}
+                  >
+                    {isNightPerson ? '🌙 Night Owl' : '☀️ Early Bird'}
+                  </button>
+                </div>
 
-              <div className={styles.inputGroup}>
-                <label className={styles.inputLabel}>
-                  <Hotel size={14} /> Hotels
-                </label>
-                <button
-                  type="button"
-                  className={`${styles.toggleBtn} ${includeHotels ? styles.hotelActive : ''}`}
-                  onClick={() => setIncludeHotels(!includeHotels)}
-                  disabled={loading}
-                  aria-label={includeHotels ? 'Hotel suggestions on' : 'Add hotel suggestions'}
-                >
-                  {includeHotels ? '🏨 Hotels On' : '🏨 Add Hotels'}
-                </button>
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}>
+                    <Hotel size={14} /> Hotels
+                  </label>
+                  <button
+                    type="button"
+                    className={`${styles.toggleBtn} ${includeHotels ? styles.hotelActive : ''}`}
+                    onClick={() => setIncludeHotels(!includeHotels)}
+                    disabled={loading}
+                    aria-label={includeHotels ? 'Hotel suggestions on' : 'Add hotel suggestions'}
+                  >
+                    {includeHotels ? '🏨 Hotels On' : '🏨 Add Hotels'}
+                  </button>
+                </div>
               </div>
             </div>
 

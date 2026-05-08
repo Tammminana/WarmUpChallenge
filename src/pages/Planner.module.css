@@ -34,7 +34,7 @@
   gap: var(--space-4);
 }
 
-/* Structured Inputs Grid */
+/* Structured Inputs Grid — 3 cols main inputs + 1 row for toggles */
 .structuredInputs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -43,6 +43,14 @@
   border: 1px solid var(--surface-glass-border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
+}
+
+/* Toggle row: Schedule + Hotels side by side, each half width */
+.toggleRow {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
 }
 
 .inputGroup {
@@ -109,17 +117,18 @@
 
 .toggleBtn {
   width: 100%;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-3);
   background: var(--surface-glass);
   border: 1px solid var(--surface-glass-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   cursor: pointer;
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
-.toggleBtn:hover { background: rgba(99,102,241,0.1); color: var(--text-primary); }
+.toggleBtn:hover { background: rgba(99,102,241,0.12); color: var(--text-primary); border-color: var(--primary-400); }
 .nightActive {
   background: rgba(139,92,246,0.2);
   border-color: rgba(139,92,246,0.5);
