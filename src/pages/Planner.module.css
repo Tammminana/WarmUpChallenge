@@ -1,0 +1,476 @@
+.container {
+  padding-top: 100px;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Input Section */
+.inputSection {
+  transition: all var(--transition-slow);
+  margin-bottom: var(--space-4);
+}
+
+.minimized {
+  margin-bottom: 0;
+}
+
+.intro {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.form {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--surface-card);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-5);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  transition: all var(--transition-base);
+}
+
+.inputWrapper:focus-within {
+  border-color: var(--primary-500);
+  box-shadow: 0 0 40px rgba(99, 102, 241, 0.2);
+}
+
+.inputIcon {
+  color: var(--primary-400);
+  margin-right: var(--space-3);
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  padding: var(--space-3) 0;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.submitBtn {
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-6);
+}
+
+/* Results Section */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.itineraryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--surface-glass-border);
+}
+
+.tripTitle {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: var(--space-2) 0;
+}
+
+.meta {
+  display: flex;
+  gap: var(--space-6);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.meta span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Budget Widget */
+.budgetWidget {
+  width: 280px;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.budgetTop {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.budgetLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.budgetStatus {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--teal-400);
+}
+
+.budgetStatus.over {
+  color: var(--rose-400);
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--surface-glass-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.5s ease;
+}
+
+.fillOver {
+  background: var(--rose-500);
+}
+
+.budgetMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Main Layout */
+.mainLayout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-8);
+  align-items: flex-start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.sidebarTitle {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dayNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dayBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  text-align: left;
+  transition: all var(--transition-base);
+  border: 1px solid transparent;
+}
+
+.dayBtn:hover {
+  background: var(--surface-glass);
+}
+
+.activeDay {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.dayNum {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary-400);
+  text-transform: uppercase;
+}
+
+.activeDay .dayNum {
+  color: var(--primary-300);
+}
+
+.dayTheme {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.activeDay .dayTheme {
+  color: var(--text-primary);
+}
+
+.sidebarSection {
+  background: rgba(255, 255, 255, 0.02);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-glass-border);
+}
+
+.sidebarSection h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sidebarSection ul {
+  padding-left: var(--space-4);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.sidebarSection li {
+  margin-bottom: var(--space-2);
+}
+
+/* Content Area */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.dayHeader {
+  background: var(--gradient-card);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-glass-border);
+}
+
+.dayHeader h3 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: var(--space-6);
+}
+
+.mealGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.mealItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.mealLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--primary-400);
+  letter-spacing: 0.05em;
+}
+
+.mealText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.activitiesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.activityCard {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: var(--space-6);
+  align-items: flex-start;
+  padding: var(--space-6);
+}
+
+.actTime {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--primary-400);
+  font-size: 0.9rem;
+  padding-top: var(--space-1);
+}
+
+.actMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.actHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.actName {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.actDesc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.actFooter {
+  display: flex;
+  gap: var(--space-6);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.actFooter span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.actTip {
+  background: rgba(99, 102, 241, 0.05);
+  border-left: 3px solid var(--primary-500);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.markBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all var(--transition-base);
+}
+
+.markBtn:hover {
+  background: var(--primary-500);
+  border-color: var(--primary-500);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Loading State */
+.loadingState {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-20) 0;
+}
+
+.loadingSpinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-secondary);
+}
+
+.error {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  color: var(--rose-400);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-6);
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .mainLayout {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+    order: 2;
+  }
+  
+  .dayNav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+  }
+  
+  .dayBtn {
+    min-width: 140px;
+  }
+  
+  .itineraryHeader {
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  
+  .budgetWidget {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .activityCard {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .actTime {
+    border-bottom: 1px solid var(--surface-glass-border);
+    padding-bottom: var(--space-2);
+  }
+  
+  .markBtn {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+  }
+  
+  .mealGrid {
+    grid-template-columns: 1fr;
+  }
+}
