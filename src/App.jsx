@@ -5,9 +5,9 @@ import Navbar from './components/Navbar';
 import Landing from './pages/Landing';
 import './App.css';
 
-// Lazy-load heavy pages — app shell loads instantly
 const Planner = lazy(() => import('./pages/Planner'));
 const Budget = lazy(() => import('./pages/Budget'));
+const Itinerary = lazy(() => import('./pages/Itinerary'));
 
 function LoadingFallback() {
   return (
@@ -39,6 +39,14 @@ export default function App() {
             element={
               <Suspense fallback={<LoadingFallback />}>
                 <Budget />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/itinerary"
+            element={
+              <Suspense fallback={<LoadingFallback />}>
+                <Itinerary />
               </Suspense>
             }
           />

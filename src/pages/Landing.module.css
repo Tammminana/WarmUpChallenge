@@ -354,6 +354,37 @@
 .mapLeft { display: flex; flex-direction: column; gap: var(--space-4); }
 .mapTitle { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
 .mapDesc { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+.cityButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.cityBtn {
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-glass-border);
+  color: var(--text-secondary);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+.cityBtn:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-300);
+}
+.activeCity {
+  background: var(--primary-600);
+  color: white;
+  border-color: var(--primary-500);
+}
+
+.clockContainer {
+  margin: var(--space-4) 0;
+}
+
 .mapRight { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--surface-glass-border); }
 .mapFrame { width: 100%; height: 320px; border: none; display: block; }
 

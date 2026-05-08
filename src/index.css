@@ -397,6 +397,7 @@ ul, ol { list-style: none; }
   color: var(--text-secondary);
   font-size: 1.1rem;
   max-width: 600px;
+  margin: 0 auto;
 }
 
 /* ========== RESPONSIVE ========== */

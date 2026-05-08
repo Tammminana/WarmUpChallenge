@@ -1,0 +1,17 @@
+.worldClock {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  min-width: 150px;
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+}
+.worldClock svg { color: var(--primary-400); }
+.clockInfo { display: flex; flex-direction: column; }
+.clockCity { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+.clockTime { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+.clockDate { font-size: 0.7rem; color: var(--text-secondary); }

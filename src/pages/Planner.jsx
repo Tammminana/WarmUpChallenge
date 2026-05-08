@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
   Accessibility, Info, CheckCircle2, Plus, Clock, Cloud,
-  ExternalLink, ChevronDown, Search
+  ExternalLink, ChevronDown, Search, Save
 } from 'lucide-react';
 import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
@@ -151,11 +151,14 @@ export default function Planner() {
     itinerary, setItinerary,
     activeDay, setActiveDay,
     totalEstimated, totalSpent, percentUsed, isOverBudget, markSpent,
-    isRainMode, setIsRainMode,
+    isRainMode, setIsRainMode, saveTrip
   } = useTrip();
 
   const [prompt, setPrompt] = useState('');
   const [rainLoading, setRainLoading] = useState(false);
+  const [showSave, setShowSave] = useState(false);
+  const [tripDate, setTripDate] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const resultsRef = useRef(null);
 
   useEffect(() => {
@@ -174,6 +177,8 @@ export default function Planner() {
       setItinerary(data);
       setActiveDay(0);
       setIsRainMode(false);
+      setShowSave(false);
+      setSaveSuccess(false);
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     } catch (err) {
       console.error(err);
@@ -196,6 +201,17 @@ export default function Planner() {
     } finally {
       setRainLoading(false);
     }
+  };
+
+  const handleSaveTrip = (e) => {
+    e.preventDefault();
+    if (!tripDate) {
+      alert("Please select a date first.");
+      return;
+    }
+    saveTrip(itinerary, new Date(tripDate).toISOString());
+    setSaveSuccess(true);
+    setShowSave(false);
   };
 
   const currentDay = itinerary?.days?.[activeDay];
@@ -297,6 +313,30 @@ export default function Planner() {
                     ))}
                   </div>
                 )}
+                
+                {/* Save Trip Actions */}
+                <div className={styles.saveSection}>
+                  {!showSave && !saveSuccess ? (
+                    <button onClick={() => setShowSave(true)} className="btn btn-outline btn-sm">
+                      <Save size={14} /> Save to Itineraries
+                    </button>
+                  ) : saveSuccess ? (
+                    <span className={styles.successText}><CheckCircle2 size={16} /> Saved! Find it in My Itineraries.</span>
+                  ) : (
+                    <form onSubmit={handleSaveTrip} className={styles.saveForm}>
+                      <input 
+                        type="datetime-local" 
+                        value={tripDate} 
+                        onChange={e => setTripDate(e.target.value)} 
+                        className={styles.saveInput}
+                        required
+                        aria-label="Trip start date"
+                      />
+                      <button type="submit" className="btn btn-primary btn-sm">Confirm Save</button>
+                      <button type="button" onClick={() => setShowSave(false)} className="btn btn-outline btn-sm">Cancel</button>
+                    </form>
+                  )}
+                </div>
               </div>
 
               {/* Budget Tracker */}

@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Zap, Globe, ArrowRight, Star, Wallet, Shield } from 'lucide-react';
+import WorldClock from '../components/WorldClock';
 import styles from './Landing.module.css';
 
 // Core 3 features — each routes somewhere meaningful
@@ -46,35 +47,58 @@ const SAMPLE_DESTINATIONS = [
   { name: 'Jaipur', country: 'India', img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&q=80', tag: 'Culture' },
 ];
 
+const EXPLORE_CITIES = [
+  { name: 'Mumbai', tz: 'Asia/Kolkata', bbox: '72.75,18.85,73.05,19.25' },
+  { name: 'London', tz: 'Europe/London', bbox: '-0.489,51.28,0.236,51.68' },
+  { name: 'New York', tz: 'America/New_York', bbox: '-74.25,40.47,-73.70,40.91' },
+  { name: 'Tokyo', tz: 'Asia/Tokyo', bbox: '139.56,35.52,139.91,35.81' },
+  { name: 'Dubai', tz: 'Asia/Dubai', bbox: '55.10,24.95,55.50,25.35' },
+];
+
 // Interactive map component — click a location to start planning
 function ExploreMap() {
   const navigate = useNavigate();
-  const [hovered, setHovered] = useState(null);
+  const [activeCity, setActiveCity] = useState(EXPLORE_CITIES[0]);
 
   const handleMapClick = useCallback(() => {
-    // Open the Planner with map-based location selection
-    navigate('/plan?mode=map');
-  }, [navigate]);
+    navigate(`/plan?dest=${encodeURIComponent(activeCity.name)}`);
+  }, [navigate, activeCity]);
 
   return (
     <div className={styles.mapExplore}>
       <div className={styles.mapLeft}>
         <h3 className={styles.mapTitle}>📍 Explore on the Map</h3>
         <p className={styles.mapDesc}>
-          Click any location on the map to start planning your trip. 
-          We focus on India first, with worldwide destinations available.
+          Select a city to see its local time and map. Click to start planning a trip there.
         </p>
+        
+        <div className={styles.cityButtons}>
+          {EXPLORE_CITIES.map(c => (
+            <button 
+              key={c.name}
+              className={`${styles.cityBtn} ${activeCity.name === c.name ? styles.activeCity : ''}`}
+              onClick={() => setActiveCity(c)}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.clockContainer}>
+          <WorldClock timezone={activeCity.tz} city={activeCity.name} />
+        </div>
+
         <button onClick={handleMapClick} className="btn btn-primary">
-          Open Interactive Planner <ArrowRight size={16} aria-hidden="true" />
+          Plan Trip to {activeCity.name} <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
       <div className={styles.mapRight}>
         <iframe
-          src="https://www.openstreetmap.org/export/embed.html?bbox=68.0,6.5,97.5,37.5&layer=mapnik"
-          title="India Map - Click to explore"
+          src={`https://www.openstreetmap.org/export/embed.html?bbox=${activeCity.bbox}&layer=mapnik`}
+          title={`${activeCity.name} Map - Click to explore`}
           className={styles.mapFrame}
           loading="lazy"
-          aria-label="Interactive map of India for trip planning"
+          aria-label={`Interactive map of ${activeCity.name} for trip planning`}
         />
       </div>
     </div>

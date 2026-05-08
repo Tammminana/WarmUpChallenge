@@ -37,6 +37,7 @@ export default function Navbar() {
           aria-label="Main navigation"
         >
           <Link to="/" className={`${styles.navLink} ${isActive('/') ? styles.active : ''}`}>Home</Link>
+          <Link to="/itinerary" className={`${styles.navLink} ${isActive('/itinerary') ? styles.active : ''}`}>Itineraries</Link>
           <Link to="/plan" className={`${styles.navLink} ${isActive('/plan') ? styles.active : ''}`}>Plan Trip</Link>
           <Link to="/budget" className={`${styles.navLink} ${isActive('/budget') ? styles.active : ''}`}>Budget</Link>
           <Link to="/plan" className="btn btn-primary btn-sm">
