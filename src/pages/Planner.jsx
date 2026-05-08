@@ -2,148 +2,19 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Send, Loader2, Sparkles, MapPin, Calendar, Wallet,
-  Plus, ExternalLink, Save, Users, Moon, Sun, Hotel, Search
+  Plus, ExternalLink, Save, Users, Moon, Sun, Hotel, Search, CheckCircle2
 } from 'lucide-react';
 import { useGemini } from '../hooks/useGemini';
 import { useTrip } from '../context/TripContext';
 import { parseCost } from '../utils/budgetUtils';
 import WeatherWidget from '../components/WeatherWidget';
+import MapEmbed from '../components/MapEmbed';
+import AnimatedSearchInput from '../components/AnimatedSearchInput';
 import styles from './Planner.module.css';
 
-// Typewriter placeholder texts for extra context field
-const SEARCH_HINTS = [
-  'Add extra details... e.g. vegetarian food only',
-  'Preferences... e.g. avoid crowded places',
-  'Special requests... e.g. wheelchair accessible',
-  'Vibes... e.g. romantic getaway, party mode',
-  'Budget style... e.g. luxury, backpacker, mid-range',
-];
+// AnimatedSearchInput extracted to src/components/AnimatedSearchInput.jsx
 
-function AnimatedSearchInput({ value, onChange, disabled, placeholder }) {
-  const [displayText, setDisplayText] = useState('');
-  const [hintIndex, setHintIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-  const [charIndex, setCharIndex] = useState(0);
-
-  useEffect(() => {
-    if (value || disabled) return;
-    const currentHint = SEARCH_HINTS[hintIndex];
-    let timer;
-    if (isTyping) {
-      if (charIndex < currentHint.length) {
-        timer = setTimeout(() => {
-          setDisplayText(currentHint.slice(0, charIndex + 1));
-          setCharIndex((c) => c + 1);
-        }, 45);
-      } else {
-        timer = setTimeout(() => setIsTyping(false), 1800);
-      }
-    } else {
-      if (charIndex > 0) {
-        timer = setTimeout(() => {
-          setDisplayText(currentHint.slice(0, charIndex - 1));
-          setCharIndex((c) => c - 1);
-        }, 25);
-      } else {
-        setHintIndex((i) => (i + 1) % SEARCH_HINTS.length);
-        setIsTyping(true);
-      }
-    }
-    return () => clearTimeout(timer);
-  }, [charIndex, isTyping, hintIndex, value, disabled]);
-
-  return (
-    <div className={styles.searchInputWrapper}>
-      <Search
-        className={`${styles.searchIcon} ${isTyping && !value ? styles.searchPulse : ''}`}
-        size={20}
-        aria-hidden="true"
-      />
-      <input
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder={value ? '' : (placeholder || displayText + '|')}
-        className={styles.input}
-        disabled={disabled}
-        aria-label="Additional trip preferences"
-        aria-describedby="search-hint"
-      />
-    </div>
-  );
-}
-
-// Google Maps embed (uses Maps Embed API — free tier)
-function MapEmbed({ destination }) {
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_KEY;
-  const [mapUrl, setMapUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!destination) return;
-    const city = destination.split(',')[0].trim();
-
-    if (apiKey) {
-      // Use Google Maps Embed API
-      setMapUrl(`https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(destination)}&zoom=12`);
-      setLoading(false);
-    } else {
-      // Fallback to OpenStreetMap
-      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`, {
-        headers: { 'Accept-Language': 'en' }
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data?.[0]) {
-            const { lat, lon } = data[0];
-            const bbox = `${parseFloat(lon) - 0.15},${parseFloat(lat) - 0.1},${parseFloat(lon) + 0.15},${parseFloat(lat) + 0.1}`;
-            setMapUrl(`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`);
-          }
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [destination, apiKey]);
-
-  return (
-    <div className={styles.mapContainer}>
-      <div className={styles.mapHeader}>
-        <MapPin size={14} aria-hidden="true" />
-        <span>{destination}</span>
-        <a
-          href={apiKey
-            ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`
-            : `https://www.openstreetmap.org/search?query=${encodeURIComponent(destination)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.mapLink}
-          aria-label={`Open ${destination} on map`}
-        >
-          <ExternalLink size={12} /> Open Map
-        </a>
-      </div>
-      {loading ? (
-        <div className={styles.mapLoading}>
-          <div className="spinner" aria-hidden="true" />
-          <span>Loading map…</span>
-        </div>
-      ) : mapUrl ? (
-        <iframe
-          src={mapUrl}
-          title={`Map of ${destination}`}
-          className={styles.mapIframe}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          allowFullScreen
-          aria-label={`Interactive map showing ${destination}`}
-        />
-      ) : (
-        <p className={styles.mapFallback}>Map unavailable for this location.</p>
-      )}
-    </div>
-  );
-}
-
+// Google Maps embed extracted to src/components/MapEmbed.jsx
 // Generates a Google Calendar link with proper dates
 function makeCalendarUrl(destination, day, activities, tripStartDate = null) {
   const title = encodeURIComponent(`Day ${day.day}: ${day.theme} — ${destination}`);
